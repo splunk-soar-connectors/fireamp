@@ -25,7 +25,6 @@ import requests
 import simplejson as json
 from uuid import UUID
 
-requests.packages.urllib3.disable_warnings()
 
 BASE_URL = "https://api.amp.sourcefire.com/"
 
