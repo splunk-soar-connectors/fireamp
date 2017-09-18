@@ -1,7 +1,7 @@
 {
   "appid": "897890aa-14f5-4d6c-b68c-e557ff30d251",
   "name": "FireAMP",
-  "description": "This app allows users to connect to FireAMP with actions such as <b>list endpoints</b>, <b>hunt url</b>, and <b>hunt ip</b>.",
+  "description": "This App allows for querying endpoints connected to Cisco FireAMP while also providing investigative hunting capabilities",
   "publisher": "Phantom",
   "type": "endpoint",
   "main_module": "fireamp_connector.pyc",
@@ -10,10 +10,10 @@
   "package_name": "phantom_fireamp",
   "product_vendor": "Cisco Systems",
   "product_name": "FireAMP",
-  "min_phantom_version": "3.0.190",
+  "min_phantom_version": "3.0.247",
   "product_version_regex": ".*",
   "logo": "cisco.png",
-  "license": "Copyright (c) Phantom Cyber Corporation 2015-2016",
+  "license": "Copyright (c) Phantom Cyber Corporation 2015-2017",
   "configuration": {
     "api_client_id": {
       "data_type": "string",
@@ -22,7 +22,7 @@
       "required": true
     },
     "api_key": {
-      "data_type": "string",
+      "data_type": "password",
       "order": 1,
       "description": "API Key",
       "required": true
