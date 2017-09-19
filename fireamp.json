@@ -5,8 +5,8 @@
   "publisher": "Phantom",
   "type": "endpoint",
   "main_module": "fireamp_connector.pyc",
-    "app_version": "1.0.18",
-    "utctime_updated": "2017-08-10T00:30:47.000000Z",
+  "app_version": "1.0.19",
+  "utctime_updated": "2017-09-19T23:25:58.000000Z",
   "package_name": "phantom_fireamp",
   "product_vendor": "Cisco Systems",
   "product_name": "FireAMP",
@@ -56,7 +56,9 @@
         {
           "data_path": "action_result.data.*.data.*.network_addresses.*.ip",
           "data_type": "string",
-          "contains": [ "ip" ],
+          "contains": [
+            "ip"
+          ],
           "column_name": "IPs",
           "column_order": 0
         },
@@ -67,14 +69,18 @@
         {
           "data_path": "action_result.data.*.data.*.hostname",
           "data_type": "string",
-          "contains": [ "host name" ],
+          "contains": [
+            "host name"
+          ],
           "column_name": "Host Name",
           "column_order": 1
         },
         {
           "data_path": "action_result.data.*.data.*.connector_guid",
           "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
+          "contains": [
+            "fireamp connector guid"
+          ],
           "column_name": "Connector GUID",
           "column_order": 2
         },
@@ -88,22 +94,28 @@
           "data_path": "action_result.data.*.data.*.active",
           "data_type": "boolean",
           "column_name": "Active",
-          "column_order": 4 
+          "column_order": 4
         },
         {
           "data_path": "action_result.data.*.data.*.links.group",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.computer",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.trajectory",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.policy.guid",
@@ -120,12 +132,16 @@
         {
           "data_path": "action_result.data.*.data.*.external_ip",
           "data_type": "string",
-          "contains": ["ip"]
+          "contains": [
+            "ip"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.internal_ips",
           "data_type": "string",
-          "contains": ["ip"]
+          "contains": [
+            "ip"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.connector_version",
@@ -134,7 +150,9 @@
         {
           "data_path": "action_result.data.*.data.*.network_addresses.*.mac",
           "data_type": "string",
-          "contains": ["mac address"]
+          "contains": [
+            "mac address"
+          ]
         },
         {
           "data_path": "action_result.data.*.version",
@@ -190,7 +208,10 @@
           "data_type": "string",
           "order": 0,
           "description": "SHA256 of file to hunt",
-          "contains": [ "hash", "sha256" ],
+          "contains": [
+            "hash",
+            "sha256"
+          ],
           "required": true,
           "primary": true
         }
@@ -205,14 +226,18 @@
         {
           "data_path": "action_result.data.*.data.*.hostname",
           "data_type": "string",
-          "contains": [ "host name" ],
+          "contains": [
+            "host name"
+          ],
           "column_name": "Host Name",
           "column_order": 0
         },
         {
           "data_path": "action_result.data.*.data.*.connector_guid",
           "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
+          "contains": [
+            "fireamp connector guid"
+          ],
           "column_name": "Connector GUID",
           "column_order": 1
         },
@@ -225,24 +250,33 @@
         {
           "data_path": "action_result.parameter.hash",
           "data_type": "string",
-          "contains": [ "hash", "sha256" ],
+          "contains": [
+            "hash",
+            "sha256"
+          ],
           "column_name": "SHA256 Hash",
           "column_order": 3
         },
         {
           "data_path": "action_result.data.*.data.*.links.group",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.computer",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.trajectory",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.version",
@@ -251,7 +285,9 @@
         {
           "data_path": "action_result.data.*.metadata.links.self",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.metadata.results.index",
@@ -303,7 +339,9 @@
           "data_type": "string",
           "order": 0,
           "description": "IP Address to hunt",
-          "contains": [ "ip" ],
+          "contains": [
+            "ip"
+          ],
           "required": true,
           "primary": true
         }
@@ -318,14 +356,18 @@
         {
           "data_path": "action_result.data.*.data.*.hostname",
           "data_type": "string",
-          "contains": [ "host name" ],
+          "contains": [
+            "host name"
+          ],
           "column_name": "Host Name",
           "column_order": 0
         },
         {
           "data_path": "action_result.data.*.data.*.connector_guid",
           "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
+          "contains": [
+            "fireamp connector guid"
+          ],
           "column_name": "Connector GUID",
           "column_order": 1
         },
@@ -338,24 +380,32 @@
         {
           "data_path": "action_result.parameter.ip",
           "data_type": "string",
-          "contains": [ "ip" ],
+          "contains": [
+            "ip"
+          ],
           "column_name": "IP",
           "column_order": 3
         },
         {
           "data_path": "action_result.data.*.data.*.links.group",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.computer",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.trajectory",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.version",
@@ -364,7 +414,9 @@
         {
           "data_path": "action_result.data.*.metadata.links.self",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.metadata.results.index",
@@ -415,7 +467,9 @@
         "url": {
           "data_type": "string",
           "order": 0,
-          "contains": [ "url" ],
+          "contains": [
+            "url"
+          ],
           "description": "URL to hunt",
           "required": true,
           "primary": true
@@ -431,14 +485,18 @@
         {
           "data_path": "action_result.data.*.data.*.hostname",
           "data_type": "string",
-          "contains": [ "host name" ],
+          "contains": [
+            "host name"
+          ],
           "column_name": "Host Name",
           "column_order": 0
         },
         {
           "data_path": "action_result.data.*.data.*.connector_guid",
           "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
+          "contains": [
+            "fireamp connector guid"
+          ],
           "column_name": "Connector GUID",
           "column_order": 1
         },
@@ -451,24 +509,32 @@
         {
           "data_path": "action_result.parameter.url",
           "data_type": "string",
-          "contains": [ "url" ],
+          "contains": [
+            "url"
+          ],
           "column_name": "URL",
           "column_order": 3
         },
         {
           "data_path": "action_result.data.*.data.*.links.group",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.computer",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.*.links.trajectory",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.version",
@@ -477,7 +543,9 @@
         {
           "data_path": "action_result.data.*.metadata.links.self",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.metadata.results.index",
@@ -528,7 +596,9 @@
         "connector_guid": {
           "data_type": "string",
           "order": 0,
-          "contains": [ "fireamp connector guid" ],
+          "contains": [
+            "fireamp connector guid"
+          ],
           "description": "Connector GUID on endpoint",
           "required": true,
           "primary": true
@@ -544,7 +614,9 @@
         {
           "data_path": "action_result.data.*.data.network_addresses.*.ip",
           "data_type": "string",
-          "contains": [ "ip" ],
+          "contains": [
+            "ip"
+          ],
           "column_name": "IPs",
           "column_order": 0
         },
@@ -555,14 +627,18 @@
         {
           "data_path": "action_result.data.*.data.hostname",
           "data_type": "string",
-          "contains": [ "host name" ],
+          "contains": [
+            "host name"
+          ],
           "column_name": "Host Name",
           "column_order": 1
         },
         {
           "data_path": "action_result.data.*.data.connector_guid",
           "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
+          "contains": [
+            "fireamp connector guid"
+          ],
           "column_name": "Connector GUID",
           "column_order": 2
         },
@@ -581,17 +657,23 @@
         {
           "data_path": "action_result.data.*.data.links.group",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.links.computer",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.links.trajectory",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.policy.guid",
@@ -608,12 +690,16 @@
         {
           "data_path": "action_result.data.*.data.external_ip",
           "data_type": "string",
-          "contains": ["ip"]
+          "contains": [
+            "ip"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.internal_ips",
           "data_type": "string",
-          "contains": ["ip"]
+          "contains": [
+            "ip"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.connector_version",
@@ -622,12 +708,16 @@
         {
           "data_path": "action_result.data.*.data.network_addresses.*.ip",
           "data_type": "string",
-          "contains": ["ip"]
+          "contains": [
+            "ip"
+          ]
         },
         {
           "data_path": "action_result.data.*.data.network_addresses.*.mac",
           "data_type": "string",
-          "contains": ["mac address"]
+          "contains": [
+            "mac address"
+          ]
         },
         {
           "data_path": "action_result.data.*.version",
@@ -636,7 +726,9 @@
         {
           "data_path": "action_result.data.*.metadata.links.self",
           "data_type": "string",
-          "contains": ["url"]
+          "contains": [
+            "url"
+          ]
         },
         {
           "data_path": "action_result.status",
@@ -649,7 +741,9 @@
         {
           "data_path": "action_result.parameter.connector_guid",
           "data_type": "string",
-          "contains": [ "fireamp connector guid" ]
+          "contains": [
+            "fireamp connector guid"
+          ]
         },
         {
           "data_path": "summary.total_objects",
