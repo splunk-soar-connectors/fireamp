@@ -1,666 +1,761 @@
 {
-  "appid": "897890aa-14f5-4d6c-b68c-e557ff30d251",
-  "name": "FireAMP",
-  "description": "This app allows users to connect to FireAMP with actions such as <b>list endpoints</b>, <b>hunt url</b>, and <b>hunt ip</b>.",
-  "publisher": "Phantom",
-  "type": "endpoint",
-  "main_module": "fireamp_connector.pyc",
+    "appid": "897890aa-14f5-4d6c-b68c-e557ff30d251",
+    "name": "FireAMP",
+    "description": "This app allows users to connect to FireAMP with actions such as <b>list endpoints</b>, <b>hunt url</b>, and <b>hunt ip</b>.",
+    "publisher": "Phantom",
+    "type": "endpoint",
+    "main_module": "fireamp_connector.pyc",
     "app_version": "1.0.18",
     "utctime_updated": "2017-08-10T00:30:47.000000Z",
-  "package_name": "phantom_fireamp",
-  "product_vendor": "Cisco Systems",
-  "product_name": "FireAMP",
-  "min_phantom_version": "3.0.190",
-  "product_version_regex": ".*",
-  "logo": "cisco.png",
-  "license": "Copyright (c) Phantom Cyber Corporation 2015-2016",
-  "configuration": {
-    "api_client_id": {
-      "data_type": "string",
-      "order": 0,
-      "description": "API Client ID",
-      "required": true
+    "package_name": "phantom_fireamp",
+    "product_vendor": "Cisco Systems",
+    "product_name": "FireAMP",
+    "min_phantom_version": "3.0.190",
+    "product_version_regex": ".*",
+    "logo": "logo_cisco.svg",
+    "logo_dark": "logo_cisco_dark.svg",
+    "license": "Copyright (c) Phantom Cyber Corporation 2015-2016",
+    "configuration": {
+        "api_client_id": {
+            "data_type": "string",
+            "order": 0,
+            "description": "API Client ID",
+            "required": true
+        },
+        "api_key": {
+            "data_type": "string",
+            "order": 1,
+            "description": "API Key",
+            "required": true
+        }
     },
-    "api_key": {
-      "data_type": "string",
-      "order": 1,
-      "description": "API Key",
-      "required": true
-    }
-  },
-  "actions": [
-    {
-      "action": "test connectivity",
-      "description": "Validate the asset configuration by attempting to connect and getting the version of the API endpoint",
-      "type": "test",
-      "identifier": "test_asset_connectivity",
-      "read_only": true,
-      "parameters": {},
-      "output": [],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "list endpoints",
-      "description": "List all of the endpoints connected to FireAMP",
-      "type": "investigate",
-      "identifier": "list_endpoints",
-      "read_only": true,
-      "parameters": {},
-      "render": {
-        "width": 12,
-        "title": "List Endpoints",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
+    "actions": [
         {
-          "data_path": "action_result.data.*.data.*.network_addresses.*.ip",
-          "data_type": "string",
-          "contains": [ "ip" ],
-          "column_name": "IPs",
-          "column_order": 0
+            "action": "test connectivity",
+            "description": "Validate the asset configuration by attempting to connect and getting the version of the API endpoint",
+            "type": "test",
+            "identifier": "test_asset_connectivity",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
         },
         {
-          "data_path": "action_result.summary.total_endpoints",
-          "data_type": "numeric"
+            "action": "list endpoints",
+            "description": "List all of the endpoints connected to FireAMP",
+            "type": "investigate",
+            "identifier": "list_endpoints",
+            "read_only": true,
+            "parameters": {},
+            "render": {
+                "width": 12,
+                "title": "List Endpoints",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.external_ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.group_guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.internal_ips",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.trajectory",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.network_addresses.*.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "IPs",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.network_addresses.*.mac",
+                    "data_type": "string",
+                    "contains": [
+                        "mac address"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.operating_system",
+                    "data_type": "string",
+                    "column_name": "Operating System",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.policy.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.policy.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.items_per_page",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_endpoints",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         },
         {
-          "data_path": "action_result.data.*.data.*.hostname",
-          "data_type": "string",
-          "contains": [ "host name" ],
-          "column_name": "Host Name",
-          "column_order": 1
+            "action": "hunt file",
+            "description": "Search for a file matching a SHA256 hash across all endpoints",
+            "type": "investigate",
+            "identifier": "hunt_file",
+            "read_only": true,
+            "parameters": {
+                "hash": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "SHA256 of file to hunt",
+                    "contains": [
+                        "hash",
+                        "sha256"
+                    ],
+                    "required": true,
+                    "primary": true
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Hunt File",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256"
+                    ],
+                    "column_name": "SHA256 Hash",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.trajectory",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.items_per_page",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.device_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         },
         {
-          "data_path": "action_result.data.*.data.*.connector_guid",
-          "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
-          "column_name": "Connector GUID",
-          "column_order": 2
+            "action": "hunt ip",
+            "description": "Search for a given IP",
+            "type": "investigate",
+            "identifier": "hunt_ip",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "data_type": "string",
+                    "order": 0,
+                    "description": "IP Address to hunt",
+                    "contains": [
+                        "ip"
+                    ],
+                    "required": true,
+                    "primary": true
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Hunt IP",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "IP",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.trajectory",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.items_per_page",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.device_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         },
         {
-          "data_path": "action_result.data.*.data.*.operating_system",
-          "data_type": "string",
-          "column_name": "Operating System",
-          "column_order": 3
+            "action": "hunt url",
+            "description": "Search for a given URL",
+            "type": "investigate",
+            "identifier": "hunt_url",
+            "read_only": true,
+            "parameters": {
+                "url": {
+                    "data_type": "string",
+                    "order": 0,
+                    "contains": [
+                        "url"
+                    ],
+                    "description": "URL to hunt",
+                    "required": true,
+                    "primary": true
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Hunt URL",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ],
+                    "column_name": "URL",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.trajectory",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.items_per_page",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.device_count",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         },
         {
-          "data_path": "action_result.data.*.data.*.active",
-          "data_type": "boolean",
-          "column_name": "Active",
-          "column_order": 4 
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.group",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.computer",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.trajectory",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.policy.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.*.policy.name",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.*.group_guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.*.external_ip",
-          "data_type": "string",
-          "contains": ["ip"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.internal_ips",
-          "data_type": "string",
-          "contains": ["ip"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.connector_version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.*.network_addresses.*.mac",
-          "data_type": "string",
-          "contains": ["mac address"]
-        },
-        {
-          "data_path": "action_result.data.*.version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.links.self",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.index",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.total",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.items_per_page",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.current_item_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
+            "action": "get device info",
+            "description": "Get information about a device given its connector GUID",
+            "type": "investigate",
+            "identifier": "get_device_info",
+            "read_only": true,
+            "parameters": {
+                "connector_guid": {
+                    "data_type": "string",
+                    "order": 0,
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "description": "Connector GUID on endpoint",
+                    "required": true,
+                    "primary": true
+                }
+            },
+            "render": {
+                "width": 12,
+                "title": "Get Device Info",
+                "type": "table",
+                "height": 5
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.data.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.connector_version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.external_ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.group_guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.internal_ips",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.links.computer",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.links.group",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.links.trajectory",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.network_addresses.*.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "IPs",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.network_addresses.*.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.network_addresses.*.mac",
+                    "data_type": "string",
+                    "contains": [
+                        "mac address"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.operating_system",
+                    "data_type": "string",
+                    "column_name": "Operating System",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.policy.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.policy.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_endpoints",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "hunt file",
-      "description": "Search for a file matching a SHA256 hash across all endpoints",
-      "type": "investigate",
-      "identifier": "hunt_file",
-      "read_only": true,
-      "parameters": {
-        "hash": {
-          "data_type": "string",
-          "order": 0,
-          "description": "SHA256 of file to hunt",
-          "contains": [ "hash", "sha256" ],
-          "required": true,
-          "primary": true
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Hunt File",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.data.*.hostname",
-          "data_type": "string",
-          "contains": [ "host name" ],
-          "column_name": "Host Name",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.data.*.connector_guid",
-          "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
-          "column_name": "Connector GUID",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.data.*.active",
-          "data_type": "boolean",
-          "column_name": "Active",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.parameter.hash",
-          "data_type": "string",
-          "contains": [ "hash", "sha256" ],
-          "column_name": "SHA256 Hash",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.group",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.computer",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.trajectory",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.links.self",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.index",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.total",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.items_per_page",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.current_item_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.device_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "hunt ip",
-      "description": "Search for a given IP",
-      "type": "investigate",
-      "identifier": "hunt_ip",
-      "read_only": true,
-      "parameters": {
-        "ip": {
-          "data_type": "string",
-          "order": 0,
-          "description": "IP Address to hunt",
-          "contains": [ "ip" ],
-          "required": true,
-          "primary": true
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Hunt IP",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.data.*.hostname",
-          "data_type": "string",
-          "contains": [ "host name" ],
-          "column_name": "Host Name",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.data.*.connector_guid",
-          "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
-          "column_name": "Connector GUID",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.data.*.active",
-          "data_type": "boolean",
-          "column_name": "Active",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.parameter.ip",
-          "data_type": "string",
-          "contains": [ "ip" ],
-          "column_name": "IP",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.group",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.computer",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.trajectory",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.links.self",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.index",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.total",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.items_per_page",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.current_item_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.device_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "hunt url",
-      "description": "Search for a given URL",
-      "type": "investigate",
-      "identifier": "hunt_url",
-      "read_only": true,
-      "parameters": {
-        "url": {
-          "data_type": "string",
-          "order": 0,
-          "contains": [ "url" ],
-          "description": "URL to hunt",
-          "required": true,
-          "primary": true
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Hunt URL",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.data.*.hostname",
-          "data_type": "string",
-          "contains": [ "host name" ],
-          "column_name": "Host Name",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.data.*.data.*.connector_guid",
-          "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
-          "column_name": "Connector GUID",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.data.*.active",
-          "data_type": "boolean",
-          "column_name": "Active",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.parameter.url",
-          "data_type": "string",
-          "contains": [ "url" ],
-          "column_name": "URL",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.group",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.computer",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.*.links.trajectory",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.links.self",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.index",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.total",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.items_per_page",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.results.current_item_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.summary.device_count",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    },
-    {
-      "action": "get device info",
-      "description": "Get information about a device given its connector GUID",
-      "type": "investigate",
-      "identifier": "get_device_info",
-      "read_only": true,
-      "parameters": {
-        "connector_guid": {
-          "data_type": "string",
-          "order": 0,
-          "contains": [ "fireamp connector guid" ],
-          "description": "Connector GUID on endpoint",
-          "required": true,
-          "primary": true
-        }
-      },
-      "render": {
-        "width": 12,
-        "title": "Get Device Info",
-        "type": "table",
-        "height": 5
-      },
-      "output": [
-        {
-          "data_path": "action_result.data.*.data.network_addresses.*.ip",
-          "data_type": "string",
-          "contains": [ "ip" ],
-          "column_name": "IPs",
-          "column_order": 0
-        },
-        {
-          "data_path": "action_result.summary.total_endpoints",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "action_result.data.*.data.hostname",
-          "data_type": "string",
-          "contains": [ "host name" ],
-          "column_name": "Host Name",
-          "column_order": 1
-        },
-        {
-          "data_path": "action_result.data.*.data.connector_guid",
-          "data_type": "string",
-          "contains": [ "fireamp connector guid" ],
-          "column_name": "Connector GUID",
-          "column_order": 2
-        },
-        {
-          "data_path": "action_result.data.*.data.operating_system",
-          "data_type": "string",
-          "column_name": "Operating System",
-          "column_order": 3
-        },
-        {
-          "data_path": "action_result.data.*.data.active",
-          "data_type": "boolean",
-          "column_name": "Active",
-          "column_order": 4
-        },
-        {
-          "data_path": "action_result.data.*.data.links.group",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.links.computer",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.links.trajectory",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.data.*.data.policy.guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.policy.name",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.group_guid",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.external_ip",
-          "data_type": "string",
-          "contains": ["ip"]
-        },
-        {
-          "data_path": "action_result.data.*.data.internal_ips",
-          "data_type": "string",
-          "contains": ["ip"]
-        },
-        {
-          "data_path": "action_result.data.*.data.connector_version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.data.network_addresses.*.ip",
-          "data_type": "string",
-          "contains": ["ip"]
-        },
-        {
-          "data_path": "action_result.data.*.data.network_addresses.*.mac",
-          "data_type": "string",
-          "contains": ["mac address"]
-        },
-        {
-          "data_path": "action_result.data.*.version",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.data.*.metadata.links.self",
-          "data_type": "string",
-          "contains": ["url"]
-        },
-        {
-          "data_path": "action_result.status",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.message",
-          "data_type": "string"
-        },
-        {
-          "data_path": "action_result.parameter.connector_guid",
-          "data_type": "string",
-          "contains": [ "fireamp connector guid" ]
-        },
-        {
-          "data_path": "summary.total_objects",
-          "data_type": "numeric"
-        },
-        {
-          "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
-        }
-      ],
-      "versions": "EQ(*)"
-    }
-  ]
+    ]
 }
