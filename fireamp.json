@@ -10,7 +10,7 @@
   "package_name": "phantom_fireamp",
   "product_vendor": "Cisco Systems",
   "product_name": "FireAMP",
-  "min_phantom_version": "3.5.180",
+  "min_phantom_version": "3.0.284",
   "product_version_regex": ".*",
   "logo": "cisco.png",
   "license": "Copyright (c) Phantom Cyber Corporation 2015-2018",
