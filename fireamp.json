@@ -10,10 +10,10 @@
   "package_name": "phantom_fireamp",
   "product_vendor": "Cisco Systems",
   "product_name": "FireAMP",
-  "min_phantom_version": "3.0.247",
+  "min_phantom_version": "3.5.180",
   "product_version_regex": ".*",
   "logo": "cisco.png",
-  "license": "Copyright (c) Phantom Cyber Corporation 2015-2017",
+  "license": "Copyright (c) Phantom Cyber Corporation 2015-2018",
   "configuration": {
     "api_client_id": {
       "data_type": "string",
@@ -752,6 +752,295 @@
         {
           "data_path": "summary.total_objects_successful",
           "data_type": "numeric"
+        }
+      ],
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "block hash",
+      "description": "Add a file hash (sha256 only) to a file list specified by GUID",
+      "type": "contain",
+      "identifier": "block_hash",
+      "read_only": false,
+      "parameters": {
+        "file_list_guid": {
+          "data_type": "string",
+          "order": 0,
+          "contains": [
+              "fireamp file list guid"
+          ],
+          "description": "File List GUID on FireAMP",
+          "required": true
+        },
+        "hash": {
+          "data_type": "string",
+          "order": 1,
+          "description": "SHA256 of file to add to file list",
+          "contains": [
+              "hash",
+              "sha256"
+          ],
+          "required": true,
+          "primary": true
+        }
+      },
+      "render": {
+        "width": 12,
+        "title": "Block Hash",
+        "type": "table",
+        "height": 5
+      },
+      "output": [
+        {
+          "data_path": "action_result.summary.file_hash_added",
+          "data_type": "boolean",
+          "column_name": "File Hash Added",
+          "column_order": 1
+        },
+        {
+          "data_path": "action_result.data.*.data.sha256",
+          "data_type": "string",
+          "contains": [
+              "hash",
+              "sha256"
+          ],
+          "column_name": "Hash",
+          "column_order": 2
+        },
+        {
+          "data_path": "action_result.data.*.data.description",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.data.source",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.data.links.file_list",
+          "data_type": "string",
+          "contains": [
+              "url"
+          ],
+          "column_name": "File List Link",
+          "column_order": 3
+        },
+        {
+          "data_path": "action_result.data.*.version",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.links.self",
+          "data_type": "string",
+          "contains": [
+              "url"
+          ]
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.parameter.file_list_guid",
+          "data_type": "string",
+          "contains": [
+              "fireamp file list guid"
+          ]
+        }
+      ],
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "list filelists",
+      "description": "List all of the File Lists (application blocking & simple custom detections) in FireAMP",
+      "type": "generic",
+      "identifier": "list_filelists",
+      "read_only": true,
+      "parameters": {},
+      "render": {
+        "width": 12,
+        "title": "List File Lists",
+        "type": "table",
+        "height": 5
+      },
+      "output": [
+        {
+          "data_path": "action_result.data.*.data.*.name",
+          "data_type": "string",
+          "column_name": "File List Name",
+          "column_order": 0
+        },
+        {
+          "data_path": "action_result.summary.total_lists",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.data.*.guid",
+          "data_type": "string",
+          "contains": [
+              "fireamp file list guid"
+          ],
+          "column_name": "File List GUID",
+          "column_order": 1
+        },
+        {
+          "data_path": "action_result.data.*.data.*.type",
+          "data_type": "string",
+          "column_name": "File List Type",
+          "column_order": 2
+        },
+        {
+          "data_path": "action_result.data.*.data.*.links.file_list",
+          "data_type": "string",
+          "contains": [
+              "url"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.metadata.links.self",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.index",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.total",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.items_per_page",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.current_item_count",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        }
+      ],
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "get filelist",
+      "description": "Get all of the hashes in a File List in FireAMP",
+      "type": "generic",
+      "identifier": "get_filelist",
+      "read_only": true,
+      "parameters": {
+        "file_list_guid": {
+          "data_type": "string",
+          "order": 0,
+          "contains": [
+              "fireamp file list guid"
+          ],
+          "description": "File List GUID on FireAMP",
+          "required": true,
+          "primary": true
+        }
+      },
+      "render": {
+        "width": 12,
+        "title": "Get File List",
+        "type": "table",
+        "height": 5
+      },
+      "output": [
+        {
+          "data_path": "action_result.data.*.data.name",
+          "data_type": "string",
+          "column_name": "File List Name",
+          "column_order": 0
+        },
+        {
+          "data_path": "action_result.summary.total_hashes",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.data.guid",
+          "data_type": "string",
+          "contains": [
+              "fireamp file list guid"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.data.policies",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.data.policies.*.name",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.data.policies.*.guid",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.data.policies.*.links.policy",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.data.items.*.sha256",
+          "data_type": "string",
+          "column_name": "sha256",
+          "contains": [
+            "sha256",
+            "hash"
+          ],
+          "column_order": 1
+        },
+        {
+          "data_path": "action_result.data.*.data.items.*.description",
+          "data_type": "string",
+          "column_name": "Description",
+          "column_order": 2
+        },
+        {
+          "data_path": "action_result.data.*.data.items.*.source",
+          "data_type": "string",
+          "column_name": "Entry Source",
+          "column_order": 3
+        },
+        {
+          "data_path": "action_result.data.*.data.items.*.links.file_list",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.links.self",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.index",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.total",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.items_per_page",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.data.*.metadata.results.current_item_count",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string"
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
         }
       ],
       "versions": "EQ(*)"
