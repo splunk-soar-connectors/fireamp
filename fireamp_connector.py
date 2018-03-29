@@ -238,7 +238,11 @@ class FireAMPConnector(BaseConnector):
         status_code, resp_json = self._make_rest_call(endpoint1)
         if (phantom.is_fail(status_code)):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
-        action_result.add_data(resp_json)
+        if resp_json["data"]:
+            for item in resp_json["data"]:
+                action_result.add_data(item)
+        else:
+            action_result.add_data(resp_json)
 
         total_lists = 0
         metadata = resp_json['metadata']
@@ -249,7 +253,11 @@ class FireAMPConnector(BaseConnector):
         status_code, resp_json = self._make_rest_call(endpoint2)
         if (phantom.is_fail(status_code)):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
-        action_result.add_data(resp_json)
+        if resp_json["data"]:
+            for item in resp_json["data"]:
+                action_result.add_data(item)
+        else:
+            action_result.add_data(resp_json)
 
         metadata = resp_json['metadata']
         if (metadata):
@@ -275,7 +283,10 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
         elif (resp_json == AMP_FILE_LIST_NOT_FOUND):
             return action_result.set_status(phantom.APP_SUCCESS, AMP_FILE_LIST_NOT_FOUND)
-        action_result.add_data(resp_json)
+        if resp_json["data"]:
+            action_result.add_data(resp_json["data"])
+        else:
+            action_result.add_data(resp_json)
 
         metadata = resp_json['metadata']
         if (metadata):
