@@ -1,7 +1,7 @@
 # --
 # File: fireamp_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2016-2017
+# Copyright (c) Phantom Cyber Corporation, 2016-2018
 #
 # This unpublished material is proprietary to Phantom Cyber.
 # All rights reserved. The methods and
@@ -25,7 +25,6 @@ import requests
 import simplejson as json
 from uuid import UUID
 
-
 BASE_URL = "https://api.amp.sourcefire.com/"
 
 
@@ -35,6 +34,9 @@ class FireAMPConnector(BaseConnector):
     ACTION_ID_HUNT_IP = "hunt_ip"
     ACTION_ID_HUNT_URL = "hunt_url"
     ACTION_ID_GET_DEVICE_INFO = "get_device_info"
+    ACTION_ID_BLOCK_HASH = "block_hash"
+    ACTION_ID_LIST_FILELISTS = "list_filelists"
+    ACTION_ID_GET_FILELIST = "get_filelist"
 
     def __init__(self):
         super(FireAMPConnector, self).__init__()
@@ -65,9 +67,13 @@ class FireAMPConnector(BaseConnector):
             # Some error making request
             return (phantom.APP_ERROR, "REST call to server failed: {}".format(e))
 
-        if (r.status_code != 200):
-            if (r.reason == "Not Found"):
+        if (r.status_code != 200 and r.status_code != 201):
+            if (r.reason == "Not Found" and "computers" in endpoint):
                 return (phantom.APP_SUCCESS, AMP_ENDPOINT_NOT_FOUND)
+            if (r.reason == "Not Found" and "file_lists" in endpoint):
+                return (phantom.APP_SUCCESS, AMP_FILE_LIST_NOT_FOUND)
+            elif (r.status_code == 409):
+                return (phantom.APP_SUCCESS, AMP_DUPLICATE_FILE_HASH)
             return (phantom.APP_ERROR, "REST response invalid. Reason: {}".format(json.loads((r.content))['errors'][0]['details'][0]))
 
         try:
@@ -124,7 +130,7 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _hunt_action(self, action_result, query):
-        endpoint = "/v1/computers/activity"
+        endpoint = "v1/computers/activity"
         params = {"q": query}
         status_code, response = self._make_rest_call(endpoint, parameters=params)
 
@@ -190,6 +196,104 @@ class FireAMPConnector(BaseConnector):
         action_result.add_data(resp_json)
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _block_hash(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+        sha256_hash = param[AMP_JSON_HASH]
+
+        try:
+            list_guid = param[AMP_JSON_LIST_GUID]  # List GUID
+            UUID(list_guid, version=4)
+
+        except ValueError:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
+
+        endpoint = "v1/file_lists/{0}/files/{1}".format(list_guid, sha256_hash)
+
+        status_code, resp_json = self._make_rest_call(endpoint, method="post")
+
+        action_result.update_summary({'file_added_to_list': False})
+
+        if (phantom.is_fail(status_code)):
+            return action_result.set_status(phantom.APP_ERROR, resp_json)
+
+        elif (resp_json == AMP_DUPLICATE_FILE_HASH):
+            return action_result.set_status(phantom.APP_SUCCESS, AMP_DUPLICATE_FILE_HASH)
+
+        elif (resp_json["data"]["sha256"]):
+            action_result.update_summary({'file_added_to_list': True})
+            action_result.add_data(resp_json)
+            return action_result.set_status(phantom.APP_SUCCESS, AMP_FILE_HASH_ADDED)
+
+        else:
+            return action_result.set_status(phantom.APP_ERROR, resp_json)
+
+    def _list_filelists(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+        endpoint1 = "v1/file_lists/application_blocking"
+        endpoint2 = "v1/file_lists/simple_custom_detections"
+
+        action_result.update_summary({'total_lists': 0})
+
+        status_code, resp_json = self._make_rest_call(endpoint1)
+        if (phantom.is_fail(status_code)):
+            return action_result.set_status(phantom.APP_ERROR, resp_json)
+        if resp_json["data"]:
+            for item in resp_json["data"]:
+                action_result.add_data(item)
+        else:
+            action_result.add_data(resp_json)
+
+        total_lists = 0
+        metadata = resp_json['metadata']
+        if (metadata):
+            total_lists = metadata['results']['total']
+            action_result.update_summary({'total_lists': total_lists})
+
+        status_code, resp_json = self._make_rest_call(endpoint2)
+        if (phantom.is_fail(status_code)):
+            return action_result.set_status(phantom.APP_ERROR, resp_json)
+        if resp_json["data"]:
+            for item in resp_json["data"]:
+                action_result.add_data(item)
+        else:
+            action_result.add_data(resp_json)
+
+        metadata = resp_json['metadata']
+        if (metadata):
+            total_lists += metadata['results']['total']
+            action_result.update_summary({'total_lists': total_lists})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_filelist(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+        try:
+            list_guid = param[AMP_JSON_LIST_GUID]  # List GUID
+            UUID(list_guid, version=4)
+        except ValueError:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
+
+        endpoint = "v1/file_lists/{0}/files".format(list_guid)
+
+        action_result.update_summary({'total_hashes': 0})
+
+        status_code, resp_json = self._make_rest_call(endpoint)
+        if (phantom.is_fail(status_code)):
+            return action_result.set_status(phantom.APP_ERROR, resp_json)
+        elif (resp_json == AMP_FILE_LIST_NOT_FOUND):
+            return action_result.set_status(phantom.APP_SUCCESS, AMP_FILE_LIST_NOT_FOUND)
+        if resp_json["data"]:
+            action_result.add_data(resp_json["data"])
+        else:
+            action_result.add_data(resp_json)
+
+        metadata = resp_json['metadata']
+        if (metadata):
+            action_result.update_summary({'total_hashes': metadata['results']['total'] })
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
 
         action = self.get_action_identifier()
@@ -206,6 +310,12 @@ class FireAMPConnector(BaseConnector):
             ret_val = self._hunt_url(param)
         elif (action == self.ACTION_ID_GET_DEVICE_INFO):
             ret_val = self._get_device_info(param)
+        elif (action == self.ACTION_ID_BLOCK_HASH):
+            ret_val = self._block_hash(param)
+        elif (action == self.ACTION_ID_LIST_FILELISTS):
+            ret_val = self._list_filelists(param)
+        elif (action == self.ACTION_ID_GET_FILELIST):
+            ret_val = self._get_filelist(param)
 
         return ret_val
 
