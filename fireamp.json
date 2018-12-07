@@ -214,6 +214,12 @@
                     ],
                     "required": true,
                     "primary": true
+                },
+                "check_execution": {
+                    "description": "Check file execution",
+                    "data_type": "boolean",
+                    "order": 1,
+                    "required": false
                 }
             },
             "render": {
@@ -256,6 +262,26 @@
                     ],
                     "column_name": "SHA256 Hash",
                     "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.file_execution_details.executed",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.file_execution_details.file_name",
+                    "data_type": "string",
+                    "contains": ["file path"]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.file_execution_details.file_path",
+                    "data_type": "string",
+                    "contains": ["file name"]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.file_execution_details.message",
+                    "data_type": "string",
+                    "column_order": 4,
+                    "column_name": "File Execution Details"
                 },
                 {
                     "data_path": "action_result.data.*.data.*.links.group",
