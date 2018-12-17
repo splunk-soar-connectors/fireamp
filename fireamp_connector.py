@@ -57,7 +57,10 @@ class FireAMPConnector(BaseConnector):
 
         request_func = getattr(requests, method)
         if (not request_func):
-            return (phantom.APP_ERROR, "Invalid method call: {0} for requests module".format(method))
+            return (
+                phantom.APP_ERROR,
+                "Invalid method call: {0} for requests module".format(method)
+            )
 
         self.send_progress("Making API Call")
 
@@ -65,7 +68,10 @@ class FireAMPConnector(BaseConnector):
             r = request_func(url, headers=headers, params=parameters)
         except Exception as e:
             # Some error making request
-            return (phantom.APP_ERROR, "REST call to server failed: {}".format(e))
+            return (
+                phantom.APP_ERROR,
+                "REST call to server failed: {}".format(e)
+            )
 
         if (r.status_code != 200 and r.status_code != 201):
             if (r.reason == "Not Found" and "computers" in endpoint):
@@ -74,14 +80,21 @@ class FireAMPConnector(BaseConnector):
                 return (phantom.APP_SUCCESS, AMP_FILE_LIST_NOT_FOUND)
             elif (r.status_code == 409):
                 return (phantom.APP_SUCCESS, AMP_DUPLICATE_FILE_HASH)
-            return (phantom.APP_ERROR, "REST response invalid. Reason: {}".format(json.loads((r.content))['errors'][0]['details'][0]))
+            return (
+                phantom.APP_ERROR,
+                "REST response invalid. Reason: {}".format(
+                    json.loads((r.content))['errors'][0]['details'][0])
+                )
 
         try:
             resp_json = r.json()
             return phantom.APP_SUCCESS, resp_json
         except Exception as e:
             # Some error parsing response
-            return (phantom.APP_ERROR, "Error while parsing response: {}".format(e))
+            return (
+                phantom.APP_ERROR,
+                "Error while parsing response: {}".format(e)
+            )
 
     def _test_asset_connectivity(self):
 
@@ -103,13 +116,18 @@ class FireAMPConnector(BaseConnector):
             self.set_status(phantom.APP_ERROR, action_result.get_message())
 
             # Append the message to display
-            self.append_to_message("Error connecting.  Please check your credentials")
+            self.append_to_message(
+                "Error connecting.  Please check your credentials"
+            )
 
             # return error
             return phantom.APP_ERROR
 
         # Set the status of the connector result
-        return self.set_status_save_progress(phantom.APP_SUCCESS, "Connection successful")
+        return self.set_status_save_progress(
+            phantom.APP_SUCCESS,
+            "Connection successful"
+        )
 
     def _list_endpoints(self, param):
 
@@ -126,16 +144,27 @@ class FireAMPConnector(BaseConnector):
 
         metadata = resp_json['metadata']
         if (metadata):
-            action_result.update_summary({'total_endpoints': metadata['results']['total']})
+            action_result.update_summary(
+                {'total_endpoints': metadata['results']['total']}
+            )
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _hunt_action(self, action_result, query):
+    def _hunt_action(self, action_result, query, check_execution=False):
         endpoint = "v1/computers/activity"
         params = {"q": query}
-        status_code, response = self._make_rest_call(endpoint, parameters=params)
+        status_code, response = self._make_rest_call(
+            endpoint,
+            parameters=params
+        )
 
         if (phantom.is_fail(status_code)):
             return action_result.set_status(phantom.APP_ERROR, response)
+
+        if check_execution:
+            response['data'] = self._check_file_execution(
+                response['data'],
+                query
+            )
 
         action_result.add_data(response)
 
@@ -143,11 +172,59 @@ class FireAMPConnector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
+    def _check_file_execution(self, response_data, file_hash):
+        guids = [
+            (i, entry['connector_guid'])
+            for i, entry
+            in enumerate(response_data)
+        ]
+
+        for guid in guids:
+            endpoint = 'v1/computers/{}/trajectory'.format(guid[1])
+            params = {'q': file_hash}
+            status_code, response = self._make_rest_call(
+                endpoint,
+                parameters=params
+            )
+            response_data[guid[0]]['file_execution_details'] = {
+                'executed': False,
+                'file_name': '',
+                'file_path': '',
+                'message': ''
+            }
+            if phantom.is_fail(status_code):
+                response_data[guid[0]]['file_execution_details']['message'] = (
+                    'Unable to retrieve execution details. Details - '
+                    + str(response)
+                )
+            else:
+                events = (response['data'].get('events') or [])
+
+                for event in events:
+                    event_type = event.get('event_type')
+                    if(
+                        event_type == 'Executed by'
+                        and file_hash == event['file']['identity']['sha256']
+                    ):
+                        response_data[guid[0]]['file_execution_details']['executed'] = True
+                        response_data[guid[0]]['file_execution_details']['file_name'] = event['file']['file_name']
+                        response_data[guid[0]]['file_execution_details']['file_path'] = event['file']['file_path']
+                        response_data[guid[0]]['file_execution_details']['message'] = 'File executed'
+
+                if response_data[guid[0]]['file_execution_details']['message'] == '':
+                    response_data[guid[0]]['file_execution_details']['message'] = 'File not executed'
+            
+        return response_data
+
     def _hunt_file(self, param):
         action_result = self.add_action_result(ActionResult(param))
-        ret_val = self._hunt_action(action_result, param[AMP_JSON_HASH])
+        ret_val = self._hunt_action(
+            action_result, param[AMP_JSON_HASH],
+            check_execution=param.get('check_execution')
+        )
         if (phantom.is_fail(ret_val)):
             return ret_val
+
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _hunt_ip(self, param):
