@@ -5,8 +5,8 @@
     "publisher": "Phantom",
     "type": "endpoint",
     "main_module": "fireamp_connector.pyc",
-    "app_version": "1.0.24",
-    "utctime_updated": "2018-12-07T02:20:14.000000Z",
+    "app_version": "1.0.25",
+    "utctime_updated": "2018-12-17T21:07:50.000000Z",
     "package_name": "phantom_fireamp",
     "product_vendor": "Cisco Systems",
     "product_name": "FireAMP",
@@ -270,12 +270,16 @@
                 {
                     "data_path": "action_result.data.*.data.*.file_execution_details.file_name",
                     "data_type": "string",
-                    "contains": ["file path"]
+                    "contains": [
+                        "file path"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.data.*.file_execution_details.file_path",
                     "data_type": "string",
-                    "contains": ["file name"]
+                    "contains": [
+                        "file name"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.data.*.file_execution_details.message",
