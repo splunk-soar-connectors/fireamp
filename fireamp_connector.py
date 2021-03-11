@@ -115,7 +115,7 @@ class FireAMPConnector(BaseConnector):
 
             # Append the message to display
             self.append_to_message(
-                "Test Connectivity Failed. Please check your credentials"
+                "Test Connectivity Failed. Please provide valid configuration parameters"
             )
 
             # return error

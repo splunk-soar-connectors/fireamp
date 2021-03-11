@@ -17,7 +17,7 @@
     "license": "Copyright (c) 2016-2021 Splunk Inc.",
     "python_version": "3",
     "latest_tested_versions": [
-        "Cloud API v1 2021-03-03"
+        "AMP for Endpoints v5.4.2021030317, API version v1"
     ],
     "configuration": {
         "base_url": {
