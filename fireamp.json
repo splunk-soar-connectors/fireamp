@@ -2,28 +2,43 @@
     "appid": "897890aa-14f5-4d6c-b68c-e557ff30d251",
     "name": "FireAMP",
     "description": "This App allows for querying endpoints connected to Cisco FireAMP while also providing investigative hunting capabilities",
-    "publisher": "Phantom",
+    "publisher": "Splunk",
     "type": "endpoint",
-    "main_module": "fireamp_connector.pyc",
-    "app_version": "1.0.26",
+    "main_module": "fireamp_connector.py",
+    "app_version": "2.0.0",
     "utctime_updated": "2021-03-11T04:40:30.000000Z",
     "package_name": "phantom_fireamp",
     "product_vendor": "Cisco Systems",
     "product_name": "FireAMP",
-    "min_phantom_version": "3.0.284",
+    "min_phantom_version": "4.9.39220",
     "product_version_regex": ".*",
-    "logo": "cisco.png",
-    "license": "Copyright (c) Phantom Cyber Corporation 2015-2018",
+    "logo": "logo_cisco.svg",
+    "logo_dark": "logo_cisco_dark.svg",
+    "license": "Copyright (c) 2016-2021 Splunk Inc.",
+    "python_version": "3",
+    "latest_tested_versions": [
+        "AMP for Endpoints v5.4.2021030317, API version v1"
+    ],
     "configuration": {
-        "api_client_id": {
+        "base_url": {
+            "description": "Base URL",
             "data_type": "string",
             "order": 0,
+            "default": "https://api.amp.sourcefire.com/"
+        },
+        "ph": {
+            "data_type": "ph",
+            "order": 1
+        },
+        "api_client_id": {
+            "data_type": "string",
+            "order": 2,
             "description": "API Client ID",
             "required": true
         },
         "api_key": {
             "data_type": "password",
-            "order": 1,
+            "order": 3,
             "description": "API Key",
             "required": true
         }
@@ -54,26 +69,18 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.data.*.network_addresses.*.ip",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "column_name": "IPs",
-                    "column_order": 0
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
-                    "data_path": "action_result.summary.total_endpoints",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.hostname",
-                    "data_type": "string",
-                    "contains": [
-                        "host name"
-                    ],
-                    "column_name": "Host Name",
-                    "column_order": 1
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.data.*.connector_guid",
@@ -85,26 +92,70 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.operating_system",
+                    "data_path": "action_result.data.*.data.*.connector_version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.external_ip",
                     "data_type": "string",
-                    "column_name": "Operating System",
-                    "column_order": 3
+                    "contains": [
+                        "ip"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.active",
+                    "data_path": "action_result.data.*.data.*.group_guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.install_date",
+                    "data_type": "string",
+                    "example_value": "2021-02-27T07:00:07Z"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.internal_ips",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.is_compromised",
                     "data_type": "boolean",
-                    "column_name": "Active",
-                    "column_order": 4
+                    "example_value": true
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_path": "action_result.data.*.data.*.isolation.available",
+                    "data_type": "boolean",
+                    "example_value": false
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.isolation.status",
+                    "data_type": "string",
+                    "example_value": "not_isolated"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.last_seen",
+                    "data_type": "string",
+                    "example_value": "2021-03-01T08:37:03Z"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
                     "data_type": "string",
                     "contains": [
                         "url"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_path": "action_result.data.*.data.*.links.group",
                     "data_type": "string",
                     "contains": [
                         "url"
@@ -118,34 +169,13 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.policy.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.policy.name",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.group_guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.external_ip",
+                    "data_path": "action_result.data.*.data.*.network_addresses.*.ip",
                     "data_type": "string",
                     "contains": [
                         "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.internal_ips",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.connector_version",
-                    "data_type": "string"
+                    ],
+                    "column_name": "IPs",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.data.*.network_addresses.*.mac",
@@ -155,19 +185,41 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.version",
+                    "data_path": "action_result.data.*.data.*.operating_system",
+                    "data_type": "string",
+                    "column_name": "Operating System",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.orbital.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "not_enabled"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.policy.guid",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.policy.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.windows_processor_id",
+                    "data_type": "string",
+                    "example_value": "8e03697a1d25bf4"
                 },
                 {
                     "data_path": "action_result.data.*.metadata.links.self",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_path": "action_result.data.*.metadata.results.index",
                     "data_type": "numeric"
                 },
                 {
@@ -175,12 +227,16 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_path": "action_result.data.*.metadata.results.total",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.version",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_endpoints",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
@@ -218,8 +274,7 @@
                 "check_execution": {
                     "description": "Check file execution",
                     "data_type": "boolean",
-                    "order": 1,
-                    "required": false
+                    "order": 1
                 }
             },
             "render": {
@@ -230,28 +285,16 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "contains": [
-                        "host name"
-                    ],
-                    "column_name": "Host Name",
-                    "column_order": 0
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.connector_guid",
-                    "data_type": "string",
-                    "contains": [
-                        "fireamp connector guid"
-                    ],
-                    "column_name": "Connector GUID",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.active",
-                    "data_type": "boolean",
-                    "column_name": "Active",
-                    "column_order": 2
+                    "data_path": "action_result.parameter.check_execution",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.parameter.hash",
@@ -262,6 +305,21 @@
                     ],
                     "column_name": "SHA256 Hash",
                     "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.data.*.file_execution_details.executed",
@@ -288,14 +346,23 @@
                     "column_name": "File Execution Details"
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
                     "data_type": "string",
                     "contains": [
                         "url"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_path": "action_result.data.*.data.*.links.group",
                     "data_type": "string",
                     "contains": [
                         "url"
@@ -309,8 +376,9 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.version",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.data.*.windows_processor_id",
+                    "data_type": "string",
+                    "example_value": "04ba26ed5813f97"
                 },
                 {
                     "data_path": "action_result.data.*.metadata.links.self",
@@ -320,11 +388,11 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_path": "action_result.data.*.metadata.results.index",
                     "data_type": "numeric"
                 },
                 {
@@ -332,20 +400,20 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_path": "action_result.data.*.metadata.results.total",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.version",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.device_count",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -384,28 +452,12 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "contains": [
-                        "host name"
-                    ],
-                    "column_name": "Host Name",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.connector_guid",
-                    "data_type": "string",
-                    "contains": [
-                        "fireamp connector guid"
-                    ],
-                    "column_name": "Connector GUID",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.active",
-                    "data_type": "boolean",
-                    "column_name": "Active",
-                    "column_order": 2
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.ip",
@@ -417,14 +469,38 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
                     "data_type": "string",
                     "contains": [
                         "url"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_path": "action_result.data.*.data.*.links.group",
                     "data_type": "string",
                     "contains": [
                         "url"
@@ -438,8 +514,9 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.version",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.data.*.windows_processor_id",
+                    "data_type": "string",
+                    "example_value": "8792fb4e63d51a0"
                 },
                 {
                     "data_path": "action_result.data.*.metadata.links.self",
@@ -449,11 +526,11 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_path": "action_result.data.*.metadata.results.index",
                     "data_type": "numeric"
                 },
                 {
@@ -461,20 +538,20 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_path": "action_result.data.*.metadata.results.total",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.version",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.device_count",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -513,28 +590,12 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "contains": [
-                        "host name"
-                    ],
-                    "column_name": "Host Name",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.connector_guid",
-                    "data_type": "string",
-                    "contains": [
-                        "fireamp connector guid"
-                    ],
-                    "column_name": "Connector GUID",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.data.*.active",
-                    "data_type": "boolean",
-                    "column_name": "Active",
-                    "column_order": 2
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.url",
@@ -546,14 +607,38 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.group",
+                    "data_path": "action_result.data.*.data.*.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.connector_guid",
+                    "data_type": "string",
+                    "contains": [
+                        "fireamp connector guid"
+                    ],
+                    "column_name": "Connector GUID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.data.*.links.computer",
                     "data_type": "string",
                     "contains": [
                         "url"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.*.links.computer",
+                    "data_path": "action_result.data.*.data.*.links.group",
                     "data_type": "string",
                     "contains": [
                         "url"
@@ -567,8 +652,9 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.version",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.data.*.windows_processor_id",
+                    "data_type": "string",
+                    "example_value": "8e03df9a47512b6"
                 },
                 {
                     "data_path": "action_result.data.*.metadata.links.self",
@@ -578,11 +664,11 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.index",
+                    "data_path": "action_result.data.*.metadata.results.current_item_count",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.total",
+                    "data_path": "action_result.data.*.metadata.results.index",
                     "data_type": "numeric"
                 },
                 {
@@ -590,20 +676,20 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.metadata.results.current_item_count",
+                    "data_path": "action_result.data.*.metadata.results.total",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.version",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.device_count",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -642,26 +728,25 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.data.network_addresses.*.ip",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "column_name": "IPs",
-                    "column_order": 0
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
-                    "data_path": "action_result.summary.total_endpoints",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.data.hostname",
+                    "data_path": "action_result.parameter.connector_guid",
                     "data_type": "string",
                     "contains": [
-                        "host name"
-                    ],
-                    "column_name": "Host Name",
-                    "column_order": 1
+                        "fireamp connector guid"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.active",
+                    "data_type": "boolean",
+                    "column_name": "Active",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.data.connector_guid",
@@ -673,26 +758,70 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.data.operating_system",
+                    "data_path": "action_result.data.*.data.connector_version",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.external_ip",
                     "data_type": "string",
-                    "column_name": "Operating System",
-                    "column_order": 3
+                    "contains": [
+                        "ip"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.active",
+                    "data_path": "action_result.data.*.data.group_guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "Host Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.install_date",
+                    "data_type": "string",
+                    "example_value": "2021-03-01T08:34:23Z"
+                },
+                {
+                    "data_path": "action_result.data.*.data.internal_ips",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.is_compromised",
                     "data_type": "boolean",
-                    "column_name": "Active",
-                    "column_order": 4
+                    "example_value": false
                 },
                 {
-                    "data_path": "action_result.data.*.data.links.group",
+                    "data_path": "action_result.data.*.data.isolation.available",
+                    "data_type": "boolean",
+                    "example_value": false
+                },
+                {
+                    "data_path": "action_result.data.*.data.isolation.status",
+                    "data_type": "string",
+                    "example_value": "not_isolated"
+                },
+                {
+                    "data_path": "action_result.data.*.data.last_seen",
+                    "data_type": "string",
+                    "example_value": "2021-03-01T08:37:05Z"
+                },
+                {
+                    "data_path": "action_result.data.*.data.links.computer",
                     "data_type": "string",
                     "contains": [
                         "url"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.links.computer",
+                    "data_path": "action_result.data.*.data.links.group",
                     "data_type": "string",
                     "contains": [
                         "url"
@@ -706,34 +835,13 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.policy.guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.policy.name",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.group_guid",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.external_ip",
+                    "data_path": "action_result.data.*.data.network_addresses.*.ip",
                     "data_type": "string",
                     "contains": [
                         "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.internal_ips",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.connector_version",
-                    "data_type": "string"
+                    ],
+                    "column_name": "IPs",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.data.network_addresses.*.ip",
@@ -750,416 +858,55 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.version",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_path": "action_result.data.*.data.operating_system",
                     "data_type": "string",
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.connector_guid",
-                    "data_type": "string",
-                    "contains": [
-                        "fireamp connector guid"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "block hash",
-            "description": "Add a file hash (sha256 only) to a file list specified by GUID",
-            "type": "contain",
-            "identifier": "block_hash",
-            "read_only": false,
-            "parameters": {
-                "file_list_guid": {
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "fireamp file list guid"
-                    ],
-                    "description": "File List GUID on FireAMP",
-                    "required": true
-                },
-                "hash": {
-                    "data_type": "string",
-                    "order": 1,
-                    "description": "SHA256 of file to add to file list",
-                    "contains": [
-                        "hash",
-                        "sha256"
-                    ],
-                    "required": true,
-                    "primary": true
-                }
-            },
-            "render": {
-                "width": 12,
-                "title": "Block Hash",
-                "type": "table",
-                "height": 5
-            },
-            "output": [
-                {
-                    "data_path": "action_result.summary.file_hash_added",
-                    "data_type": "boolean",
-                    "column_name": "File Hash Added",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.data.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
-                    ],
-                    "column_name": "Hash",
-                    "column_order": 2,
-                    "example_values": [
-                        "27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.data.source",
-                    "data_type": "string",
-                    "example_values": [
-                        "Created by entering SHA-256 via Public api."
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.links.file_list",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ],
-                    "column_name": "File List Link",
-                    "column_order": 3,
-                    "example_values": [
-                        "https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.version",
-                    "data_type": "string",
-                    "example_values": [
-                        "v1.2.0"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.metadata.links.self",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        "https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e/files/27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Hash added to list"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.file_list_guid",
-                    "data_type": "string",
-                    "contains": [
-                        "fireamp file list guid"
-                    ],
-                    "example_values": [
-                        "81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.hash",
-                    "data_type": "string",
-                    "example_values": [
-                        "27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4"
-                    ],
-                    "contains": [
-                        "hash",
-                        "sha256"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.file_added_to_list",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "list filelists",
-            "description": "List all of the File Lists (application blocking & simple custom detections) in FireAMP",
-            "type": "generic",
-            "identifier": "list_filelists",
-            "read_only": true,
-            "parameters": {},
-            "render": {
-                "width": 12,
-                "title": "List File Lists",
-                "type": "table",
-                "height": 5
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.guid",
-                    "data_type": "string",
-                    "example_values": [
-                        "81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ],
-                    "contains": [
-                        "fireamp file list guid"
-                    ],
-                    "column_name": "File List GUID",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "application_blocking"
-                    ],
-                    "column_name": "File List Type",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test hash list"
-                    ],
-                    "column_name": "File List Name",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.links.file_list",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Total lists: 3"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.total_lists",
-                    "data_type": "numeric",
-                    "example_values": [
-                        3
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                }
-            ],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "get filelist",
-            "description": "Get all of the hashes in a File List in FireAMP",
-            "type": "generic",
-            "identifier": "get_filelist",
-            "read_only": true,
-            "parameters": {
-                "file_list_guid": {
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "fireamp file list guid"
-                    ],
-                    "description": "File List GUID on FireAMP",
-                    "required": true,
-                    "primary": true
-                }
-            },
-            "render": {
-                "width": 12,
-                "title": "Get File List",
-                "type": "table",
-                "height": 5
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.items.*.source",
-                    "data_type": "string",
-                    "example_values": [
-                        "Created by entering SHA-256 via Web from 23.251.93.203."
-                    ],
-                    "column_name": "Entry Source",
+                    "column_name": "Operating System",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.items.*.sha256",
+                    "data_path": "action_result.data.*.data.orbital.status",
                     "data_type": "string",
-                    "example_values": [
-                        "ad3f8b790a9012c3ab113501a0d31b6ca5af6a07f7ac5ee745c4bbd5757e2cb3"
-                    ],
-                    "contains": [
-                        "sha256"
-                    ],
-                    "column_name": "SHA256",
-                    "column_order": 1
+                    "example_value": "not_enabled"
                 },
                 {
-                    "data_path": "action_result.data.*.items.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        "Manual add"
-                    ],
-                    "column_name": "Description",
-                    "column_order": 2
+                    "data_path": "action_result.data.*.data.policy.guid",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.items.*.links.file_list",
+                    "data_path": "action_result.data.*.data.policy.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.windows_processor_id",
                     "data_type": "string",
-                    "example_values": [
-                        "https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ],
+                    "example_value": "b927af6438501de"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.links.self",
+                    "data_type": "string",
                     "contains": [
                         "url"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.guid",
-                    "data_type": "string",
-                    "example_values": [
-                        "81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ],
-                    "contains": [
-                        "fireamp file list guid"
-                    ]
+                    "data_path": "action_result.data.*.version",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test hash list"
-                    ],
-                    "column_name": "File List Name",
-                    "column_order": 0
+                    "data_path": "action_result.summary.total_endpoints",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Total hashes: 2"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.file_list_guid",
-                    "data_type": "string",
-                    "example_values": [
-                        "81486554-e6ef-4a57-90ee-bc564a98a94e"
-                    ],
-                    "contains": [
-                        "fireamp file list guid"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.total_hashes",
-                    "data_type": "numeric",
-                    "example_values": [
-                        2
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
+                    "data_type": "numeric"
                 }
             ],
             "versions": "EQ(*)"
