@@ -81,8 +81,9 @@ class FireAMPConnector(BaseConnector):
             return (
                 phantom.APP_ERROR,
                 "REST response invalid. Reason: {}".format(
-                    json.loads((r.content))['errors'][0]['details'][0])
+                    json.loads((r.content))['errors'][0]['details'][0]
                 )
+            )
 
         try:
             resp_json = r.json()
@@ -177,40 +178,38 @@ class FireAMPConnector(BaseConnector):
             in enumerate(response_data)
         ]
 
-        for guid in guids:
-            endpoint = '/v1/computers/{}/trajectory'.format(guid[1])
+        for index, guid in guids:
+            endpoint = '/v1/computers/{}/trajectory'.format(guid)
             params = {'q': file_hash}
             status_code, response = self._make_rest_call(
                 endpoint,
                 parameters=params
             )
-            response_data[guid[0]]['file_execution_details'] = {
+            response_data[index]['file_execution_details'] = {
                 'executed': False,
                 'file_name': '',
                 'file_path': '',
                 'message': ''
             }
             if phantom.is_fail(status_code):
-                response_data[guid[0]]['file_execution_details']['message'] = (
-                    'Unable to retrieve execution details. Details - '
-                    + str(response)
+                response_data[index]['file_execution_details']['message'] = (
+                    'Unable to retrieve execution details. Details - {}'.format(
+                        str(response)
+                    )
                 )
             else:
                 events = (response['data'].get('events') or [])
 
                 for event in events:
                     event_type = event.get('event_type')
-                    if(
-                        event_type == 'Executed by'
-                        and file_hash == event['file']['identity']['sha256']
-                    ):
-                        response_data[guid[0]]['file_execution_details']['executed'] = True
-                        response_data[guid[0]]['file_execution_details']['file_name'] = event['file']['file_name']
-                        response_data[guid[0]]['file_execution_details']['file_path'] = event['file']['file_path']
-                        response_data[guid[0]]['file_execution_details']['message'] = 'File executed'
+                    if event_type == 'Executed by' and file_hash == event['file']['identity']['sha256']:
+                        response_data[index]['file_execution_details']['executed'] = True
+                        response_data[index]['file_execution_details']['file_name'] = event['file']['file_name']
+                        response_data[index]['file_execution_details']['file_path'] = event['file']['file_path']
+                        response_data[index]['file_execution_details']['message'] = 'File executed'
 
-                if response_data[guid[0]]['file_execution_details']['message'] == '':
-                    response_data[guid[0]]['file_execution_details']['message'] = 'File not executed'
+                if response_data[index]['file_execution_details']['message'] == '':
+                    response_data[index]['file_execution_details']['message'] = 'File not executed'
 
         return response_data
 
