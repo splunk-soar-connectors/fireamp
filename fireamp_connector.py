@@ -479,9 +479,6 @@ class FireAMPConnector(BaseConnector):
             if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
                 return action_result.set_status(ret_val, resp_json)
 
-            elif resp_json == AMP_ENDPOINT_NOT_FOUND:
-                return action_result.set_status(phantom.APP_SUCCESS, AMP_ENDPOINT_NOT_FOUND)
-
         action_result.update_summary({'total_endpoints': len(resp_json['data'])})
 
         action_result.add_data(resp_json)
@@ -748,9 +745,6 @@ class FireAMPConnector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint)
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
-        elif resp_json == AMP_ENDPOINT_NOT_FOUND:
-            action_result.add_data(resp_json)
-            return action_result.set_status(phantom.APP_SUCCESS, AMP_ENDPOINT_NOT_FOUND)
 
         resp_json['events'] = resp_json.get('data', {}).get('events')
         resp_json['computer'] = resp_json.get('data', {}).get('computer')
