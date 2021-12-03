@@ -28,6 +28,7 @@ AMP_FILE_HASH_ADDED = "Hash added to list"
 AMP_FILE_HASH_REMOVED = "Hash removed from list"
 AMP_DUPLICATE_FILE_HASH = "Hash already in list"
 AMP_ISOLATION_SUCCESS = ['pending_start', 'pending_stop']
+AMP_FIND_DEVICE_ERR_MSG = 'Must provide at least one of the following: group_name, group_guid, hostname, external_ip, internal_ip'
 AMP_ISOLATION_FAIL = []
 
 BASE_URL = "https://api.amp.sourcefire.com/"
