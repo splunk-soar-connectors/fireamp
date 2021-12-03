@@ -117,7 +117,18 @@ class FireAMPConnector(BaseConnector):
                     return (phantom.APP_SUCCESS, AMP_FILE_UNBLOCK_NOT_FOUND)
             if r.status_code == 409 and "file_lists" in endpoint:
                 return (phantom.APP_SUCCESS, AMP_DUPLICATE_FILE_HASH)
-            return (phantom.APP_ERROR, "Error processing request: {}".format(json.loads((r.content))['errors'][0]['details'][0]))
+
+            try:
+                resp_json = json.loads(r.content)
+                error = resp_json.get('error')
+
+                if error:
+                    return (phantom.APP_ERROR, "Error processing request: {}".format(error.get('message')))
+
+                return (phantom.APP_ERROR, "Error processing request: {}".format(resp_json['errors'][0]['details'][0]))
+
+            except Exception:
+                return (phantom.APP_ERROR, "Error processing request: {}".format(r.content))
 
         try:
             resp_json = r.json()
