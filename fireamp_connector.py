@@ -15,18 +15,18 @@
 #
 #
 # Phantom imports
+import base64 as b64
+from datetime import datetime
+from uuid import UUID
+
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
+import simplejson as json
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 # Local Imports
 from fireamp_consts import *
-
-import base64 as b64
-import requests
-import simplejson as json
-from uuid import UUID
-from datetime import datetime
 
 
 class RetVal(tuple):
@@ -276,7 +276,8 @@ class FireAMPConnector(BaseConnector):
         ret_val, resp_json = self._make_rest_call('/v1/computers/{0}/isolation'.format(c_guid), method=http_method)
         action_result.add_data(resp_json)
         if phantom.is_fail(ret_val):
-            return action_result.set_status(phantom.APP_ERROR, 'Failed to {0} quarantine on {1}. Details: {2}'.format(quarantine_action, c_guid, str(resp_json)))
+            return action_result.set_status(phantom.APP_ERROR,
+                                            'Failed to {0} quarantine on {1}. Details: {2}'.format(quarantine_action, c_guid, str(resp_json)))
         elif resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
 
@@ -465,7 +466,7 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, 'User cannot be used in conjunction with any other search option')
 
         if not(params or param.get('user')):
-            return action_result.set_status(phantom.APP_ERROR, 'Must provide at least one of the following: group_name, group_guid, hostname, external_ip, internal_ip')
+            return action_result.set_status(phantom.APP_ERROR, AMP_FIND_DEVICE_ERR_MSG)
 
         if param.get('user'):
             ret_val, resp_json = self._make_rest_call('/v1/computers/user_activity?q={0}'.format(param.get('user')))
@@ -759,7 +760,8 @@ class FireAMPConnector(BaseConnector):
 
         if param.get('days_back'):
             if days_back < 0:
-                return action_result.set_status(phantom.APP_ERROR, 'Please provide a valid non-negative integer value in the ‘days_back’ parameter')
+                return action_result.set_status(phantom.APP_ERROR,
+                                                'Please provide a valid non-negative integer value in the ‘days_back’ parameter')
 
         endpoint = "/v1/computers/{}/trajectory{}{}".format(connector_guid, limit, hash_filter)
 
@@ -908,6 +910,7 @@ class FireAMPConnector(BaseConnector):
 
 if __name__ == '__main__':
     import sys
+
     import pudb
 
     pudb.set_trace()
