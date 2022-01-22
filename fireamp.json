@@ -5,8 +5,8 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "fireamp_connector.py",
-    "app_version": "2.1.7",
-    "utctime_updated": "2021-12-06T13:54:07.000000Z",
+    "app_version": "2.1.10",
+    "utctime_updated": "2022-01-13T05:45:23.000000Z",
     "package_name": "phantom_fireamp",
     "product_vendor": "Cisco Systems",
     "product_name": "FireAMP",
@@ -14,8 +14,9 @@
     "product_version_regex": ".*",
     "logo": "logo_cisco.svg",
     "logo_dark": "logo_cisco_dark.svg",
-    "license": "Copyright (c) 2016-2021 Splunk Inc.",
+    "license": "Copyright (c) 2016-2022 Splunk Inc.",
     "python_version": "3",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "AMP for Endpoints v5.4.2021112501, API version v1"
     ],
@@ -5101,7 +5102,7 @@
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+                "input_file": "wheels/urllib3-1.26.8-py2.py3-none-any.whl"
             }
         ]
     }
