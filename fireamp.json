@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "fireamp_connector.py",
-    "app_version": "2.1.10",
+    "app_version": "2.1.11",
     "utctime_updated": "2022-01-13T05:45:23.000000Z",
     "package_name": "phantom_fireamp",
     "product_vendor": "Cisco Systems",

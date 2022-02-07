@@ -2,11 +2,11 @@
 # FireAMP
 
 Publisher: Splunk  
-Connector Version: 2\.1\.10  
+Connector Version: 2\.1\.11  
 Product Vendor: Cisco Systems  
 Product Name: FireAMP  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.0\.0  
+Minimum Product Version: 5\.1\.0  
 
 This App allows for querying endpoints connected to Cisco FireAMP while also providing investigative hunting capabilities
 
