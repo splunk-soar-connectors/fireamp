@@ -13,7 +13,7 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 AMP_JSON_API_CLIENT_ID = "api_client_id"
-AMP_JSON_API_KEY = "api_key"
+AMP_JSON_API_KEY = "api_key"  # pragma: allowlist secret
 AMP_JSON_BASE_URL = "base_url"
 AMP_JSON_HASH = "hash"
 AMP_JSON_IP = "ip"
