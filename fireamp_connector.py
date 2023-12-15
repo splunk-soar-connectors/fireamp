@@ -550,8 +550,18 @@ class FireAMPConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _allow_hash(self, param):
+    def _handle_disallow_hash(self, param):
         self.save_progress("Running action - block hash")
+        self.save_progress("Calling function block hash")
+        self._handle_block_hash(param)
+    
+    def _handle_allow_hash(self, param):
+        self.save_progress("Running action - block hash")
+        self.save_progress("calling function unblock hash")
+        self._handle_unblock_hash(param)
+
+    def _handle_unblock_hash(self, param):
+        self.save_progress("Running action - allow hash")
         action_result = self.add_action_result(ActionResult(param))
         sha256_hash = param[AMP_JSON_HASH]
 
@@ -580,8 +590,8 @@ class FireAMPConnector(BaseConnector):
             self.save_progress("Error occurred for action - block hash json_response: {0}".format(resp_json))
             return action_result.set_status(phantom.APP_ERROR, resp_json)
 
-    def _disallow_hash(self, param):
-        self.save_progress("Running action - unblock hash")
+    def _handle_block_hash(self, param):
+        self.save_progress("Running action - disallow hash")
         action_result = self.add_action_result(ActionResult(param))
         sha256_hash = param[AMP_JSON_HASH]
 
@@ -898,9 +908,9 @@ class FireAMPConnector(BaseConnector):
         elif action == self.ACTION_ID_GET_DEVICE_INFO:
             ret_val = self._get_device_info(param)
         elif action == self.ACTION_ID_BLOCK_HASH:
-            ret_val = self._allow_hash(param)
+            ret_val = self._handle_block_hash(param)
         elif action == self.ACTION_ID_UNBLOCK_HASH:
-            ret_val = self._disallow_hash(param)
+            ret_val = self._handle_unblock_hash(param)
         elif action == self.ACTION_ID_LIST_FILELISTS:
             ret_val = self._list_filelists(param)
         elif action == self.ACTION_ID_GET_FILELIST:
@@ -924,9 +934,9 @@ class FireAMPConnector(BaseConnector):
         elif action == self.ACTION_ID_UNQUARANTINE:
             ret_val = self._handle_unquarantine_device(param)
         elif action == self.ACTION_ID_ALLOW_HASH:
-            ret_val = self._allow_hash(param)
+            ret_val = self._handle_allow_hash(param)
         elif action == self.ACTION_ID_DISALLOW_HASH:
-            ret_val = self._disallow_hash(param)
+            ret_val = self._handle_disallow_hash(param)
         elif action == self.ACTION_ID_GET_DEVICE_TRAJECTORY:
             ret_val = self._get_device_trajectory(param)
         elif action == self.ACTION_ID_GET_DEVICE_EVENTS:
