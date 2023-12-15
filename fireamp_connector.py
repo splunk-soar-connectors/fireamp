@@ -560,7 +560,7 @@ class FireAMPConnector(BaseConnector):
         self.save_progress("calling function unblock hash")
         self._handle_unblock_hash(param)
 
-    def _handle_unblock_hash(self, param):
+    def _handle_block_hash(self, param):
         self.save_progress("Running action - allow hash")
         action_result = self.add_action_result(ActionResult(param))
         sha256_hash = param[AMP_JSON_HASH]
@@ -590,7 +590,7 @@ class FireAMPConnector(BaseConnector):
             self.save_progress("Error occurred for action - block hash json_response: {0}".format(resp_json))
             return action_result.set_status(phantom.APP_ERROR, resp_json)
 
-    def _handle_block_hash(self, param):
+    def _handle_unblock_hash(self, param):
         self.save_progress("Running action - disallow hash")
         action_result = self.add_action_result(ActionResult(param))
         sha256_hash = param[AMP_JSON_HASH]
