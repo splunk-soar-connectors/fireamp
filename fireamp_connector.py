@@ -263,13 +263,12 @@ class FireAMPConnector(BaseConnector):
             return action_result.get_status()
 
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def _handle_unquarantine_device(self, param):
         return self._quarantine_status_change(param, 'stop')
 
     def _handle_quarantine_device(self, param):
         return self._quarantine_status_change(param, 'start')
-
 
     def _quarantine_status_change(self, param, quarantine_action):
         action_result = self.add_action_result(ActionResult(param))
