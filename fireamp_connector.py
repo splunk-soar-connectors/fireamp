@@ -1,6 +1,6 @@
 # File: fireamp_connector.py
 #
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -166,12 +166,14 @@ class FireAMPConnector(BaseConnector):
         return self.set_status_save_progress(phantom.APP_SUCCESS, "Test Connectivity Passed")
 
     def _list_endpoints(self, param):
+        self.save_progress("Running action - list endpoint")
 
         action_result = self.add_action_result(ActionResult(param))
         endpoint = "/v1/computers"
 
         action_result.update_summary({'total_endpoints': 0})
 
+        self.save_progress("sending http request to list endpoint")
         ret_val, resp_json = self._make_rest_call(endpoint)
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
@@ -261,6 +263,13 @@ class FireAMPConnector(BaseConnector):
             return action_result.get_status()
 
         return action_result.set_status(phantom.APP_SUCCESS)
+    
+    def _handle_unquarantine_device(self, param):
+        return self._quarantine_status_change(param, 'stop')
+
+    def _handle_quarantine_device(self, param):
+        return self._quarantine_status_change(param, 'start')
+
 
     def _quarantine_status_change(self, param, quarantine_action):
         action_result = self.add_action_result(ActionResult(param))
@@ -297,8 +306,10 @@ class FireAMPConnector(BaseConnector):
         return phantom.APP_SUCCESS, resp_json['data'][0]['guid']
 
     def _list_groups(self, param):
+        self.save_progress("Running action - list groups")
         action_result = self.add_action_result(ActionResult(param))
 
+        self.save_progress("Sending http request for list groups")
         ret_val, resp_json = self._make_rest_call('/v1/groups')
 
         if phantom.is_fail(ret_val):
@@ -314,6 +325,7 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, 'Found {0} groups'.format(len(resp_json.get('data', []))))
 
     def _list_policies(self, param):
+        self.save_progress("Running action - list policies")
         action_result = self.add_action_result(ActionResult(param))
         params = {}
 
@@ -322,6 +334,7 @@ class FireAMPConnector(BaseConnector):
         if param.get('name'):
             params['name[]'] = param.get('name')
 
+        self.save_progress("sending http request to list policies")
         ret_val, resp_json = self._make_rest_call('/v1/policies', params=params)
 
         if phantom.is_fail(ret_val):
@@ -508,6 +521,8 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_device_info(self, param):
+        self.save_progress("Running action - get device info")
+
         action_result = self.add_action_result(ActionResult(param))
 
         try:
@@ -517,6 +532,8 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Parameter connector_guid failed validation")
 
         endpoint = "/v1/computers/{0}".format(c_guid)
+
+        self.save_progress("Making rest call to get device info")
 
         ret_val, resp_json = self._make_rest_call(endpoint)
 
@@ -530,7 +547,8 @@ class FireAMPConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _block_hash(self, param):
+    def _allow_hash(self, param):
+        self.save_progress("Running action - block hash")
         action_result = self.add_action_result(ActionResult(param))
         sha256_hash = param[AMP_JSON_HASH]
 
@@ -556,9 +574,11 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS, AMP_FILE_HASH_ADDED)
 
         else:
+            self.save_progress("Error occurred for action - block hash json_response: {0}".format(resp_json))
             return action_result.set_status(phantom.APP_ERROR, resp_json)
 
-    def _unblock_hash(self, param):
+    def _disallow_hash(self, param):
+        self.save_progress("Running action - unblock hash")
         action_result = self.add_action_result(ActionResult(param))
         sha256_hash = param[AMP_JSON_HASH]
 
@@ -570,6 +590,7 @@ class FireAMPConnector(BaseConnector):
 
         endpoint = "/v1/file_lists/{0}/files/{1}".format(list_guid, sha256_hash)
         action_result.update_summary({'file_removed_from_list': False})
+        self.save_progress("Making rest call to unblock hash")
         ret_val, resp_json = self._make_rest_call(endpoint, method="delete")
 
         if phantom.is_fail(ret_val):
@@ -751,6 +772,7 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_device_trajectory(self, param):
+        self.save_progress("Running action - get device trajectory")
         action_result = self.add_action_result(ActionResult(param))
 
         connector_guid = param['connector_guid']
@@ -765,6 +787,7 @@ class FireAMPConnector(BaseConnector):
 
         endpoint = "/v1/computers/{}/trajectory{}{}".format(connector_guid, limit, hash_filter)
 
+        self.save_progress("making rest request to get device trajectory")
         ret_val, resp_json = self._make_rest_call(endpoint)
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
@@ -787,6 +810,8 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_device_events(self, param):
+        self.save_progress("Running action - get device events")
+
         action_result = self.add_action_result(ActionResult(param))
 
         event_params = {
@@ -804,6 +829,7 @@ class FireAMPConnector(BaseConnector):
 
         endpoint = "/v1/events"
 
+        self.save_progress("making rest request to get device event")
         ret_val, resp_json = self._make_rest_call(endpoint, params=query_params)
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
@@ -869,9 +895,9 @@ class FireAMPConnector(BaseConnector):
         elif action == self.ACTION_ID_GET_DEVICE_INFO:
             ret_val = self._get_device_info(param)
         elif action == self.ACTION_ID_BLOCK_HASH:
-            ret_val = self._block_hash(param)
+            ret_val = self._allow_hash(param)
         elif action == self.ACTION_ID_UNBLOCK_HASH:
-            ret_val = self._unblock_hash(param)
+            ret_val = self._disallow_hash(param)
         elif action == self.ACTION_ID_LIST_FILELISTS:
             ret_val = self._list_filelists(param)
         elif action == self.ACTION_ID_GET_FILELIST:
@@ -891,13 +917,13 @@ class FireAMPConnector(BaseConnector):
         elif action == self.ACTION_ID_LIST_POLICIES:
             ret_val = self._list_policies(param)
         elif action == self.ACTION_ID_QUARANTINE:
-            ret_val = self._quarantine_status_change(param, 'start')
+            ret_val = self._handle_quarantine_device(param)
         elif action == self.ACTION_ID_UNQUARANTINE:
-            ret_val = self._quarantine_status_change(param, 'stop')
+            ret_val = self._handle_unquarantine_device(param)
         elif action == self.ACTION_ID_ALLOW_HASH:
-            ret_val = self._block_hash(param)
+            ret_val = self._allow_hash(param)
         elif action == self.ACTION_ID_DISALLOW_HASH:
-            ret_val = self._unblock_hash(param)
+            ret_val = self._disallow_hash(param)
         elif action == self.ACTION_ID_GET_DEVICE_TRAJECTORY:
             ret_val = self._get_device_trajectory(param)
         elif action == self.ACTION_ID_GET_DEVICE_EVENTS:
