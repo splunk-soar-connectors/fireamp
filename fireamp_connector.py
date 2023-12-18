@@ -554,7 +554,7 @@ class FireAMPConnector(BaseConnector):
         self.save_progress("Running action - block hash")
         self.save_progress("Calling function block hash")
         self._handle_block_hash(param)
-    
+
     def _handle_allow_hash(self, param):
         self.save_progress("Running action - block hash")
         self.save_progress("calling function unblock hash")
