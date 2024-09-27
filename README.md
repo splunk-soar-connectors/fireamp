@@ -2,7 +2,7 @@
 # FireAMP
 
 Publisher: Splunk  
-Connector Version: 2.1.12  
+Connector Version: 2.1.13  
 Product Vendor: Cisco Systems  
 Product Name: FireAMP  
 Product Version Supported (regex): ".\*"  
