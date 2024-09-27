@@ -5,12 +5,12 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "fireamp_connector.py",
-    "app_version": "2.1.12",
-    "utctime_updated": "2022-01-13T05:45:23.000000Z",
+    "app_version": "2.1.13",
+    "utctime_updated": "2024-09-27T11:20:53.000000Z",
     "package_name": "phantom_fireamp",
     "product_vendor": "Cisco Systems",
     "product_name": "FireAMP",
-    "min_phantom_version": "5.1.0",
+    "min_phantom_version": "6.2.1",
     "product_version_regex": ".*",
     "logo": "logo_cisco.svg",
     "logo_dark": "logo_cisco_dark.svg",
@@ -5082,7 +5082,7 @@
         "wheel": [
             {
                 "module": "simplejson",
-                "input_file": "wheels/py36/simplejson-3.17.2-cp36-cp36m-manylinux2010_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+                "input_file": "wheels/py36/simplejson-3.17.2-cp36-cp36m-manylinux2010_x86_64.manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_28_x86_64.whl"
             }
         ]
     },
@@ -5090,7 +5090,7 @@
         "wheel": [
             {
                 "module": "simplejson",
-                "input_file": "wheels/py39/simplejson-3.17.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+                "input_file": "wheels/py39/simplejson-3.17.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_28_x86_64.whl"
             }
         ]
     }
