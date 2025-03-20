@@ -1,6 +1,6 @@
 # File: fireamp_connector.py
 #
-# Copyright (c) 2016-2024 Splunk Inc.
+# Copyright (c) 2016-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ class FireAMPConnector(BaseConnector):
     def __init__(self):
         self._base_url = None
 
-        super(FireAMPConnector, self).__init__()
+        super().__init__()
 
     def initialize(self):
         """Called once for every action, all member initializations occur here"""
@@ -81,14 +81,13 @@ class FireAMPConnector(BaseConnector):
         client_id = config[AMP_JSON_API_CLIENT_ID]
         api_key = config[AMP_JSON_API_KEY]
         # Authtoken is client id an api_key encoded with : between them
-        auth_string = "{0}:{1}".format(client_id, api_key)
+        auth_string = f"{client_id}:{api_key}"
         auth = b64.b64encode(auth_string.encode("utf-8")).decode()
-        header = {"Authorization": "Basic {0}".format(auth)}
+        header = {"Authorization": f"Basic {auth}"}
         return header
 
     def _make_rest_call(self, endpoint, method="get", params=None, data=None):
-
-        url = "{0}{1}".format(self._base_url, endpoint)
+        url = f"{self._base_url}{endpoint}"
         headers = self._create_auth_header()
 
         if data:
@@ -97,7 +96,7 @@ class FireAMPConnector(BaseConnector):
 
         request_func = getattr(requests, method)
         if not request_func:
-            return (phantom.APP_ERROR, "Invalid method call: {0} for requests module".format(method))
+            return (phantom.APP_ERROR, f"Invalid method call: {method} for requests module")
 
         self.send_progress("Making API Call")
 
@@ -105,7 +104,7 @@ class FireAMPConnector(BaseConnector):
             r = request_func(url, headers=headers, params=params, data=data)
         except Exception as e:
             # Some error making request
-            return (phantom.APP_ERROR, "REST call to server failed: {}".format(e))
+            return (phantom.APP_ERROR, f"REST call to server failed: {e}")
 
         if r.status_code != 200 and r.status_code != 201 and r.status_code != 202:
             if r.reason == "Not Found" and "computers" in endpoint:
@@ -128,17 +127,16 @@ class FireAMPConnector(BaseConnector):
                 return (phantom.APP_ERROR, "Error processing request: {}".format(resp_json["errors"][0]["details"][0]))
 
             except Exception:
-                return (phantom.APP_ERROR, "Error processing request: {}".format(r.content))
+                return (phantom.APP_ERROR, f"Error processing request: {r.content}")
 
         try:
             resp_json = r.json()
             return (phantom.APP_SUCCESS, resp_json)
         except Exception as e:
             # Some error parsing response
-            return (phantom.APP_ERROR, "Error while parsing response: {}".format(e))
+            return (phantom.APP_ERROR, f"Error while parsing response: {e}")
 
     def _test_asset_connectivity(self):
-
         action_result = ActionResult()
 
         endpoint = "/v1/version"
@@ -149,7 +147,6 @@ class FireAMPConnector(BaseConnector):
 
         # Process errors
         if phantom.is_fail(ret_val):
-
             # Dump error messages in the log
             self.debug_print(action_result.get_message())
 
@@ -206,14 +203,12 @@ class FireAMPConnector(BaseConnector):
         guids = [(i, entry["connector_guid"]) for i, entry in enumerate(response_data)]
 
         for index, guid in guids:
-            endpoint = "/v1/computers/{}/trajectory".format(guid)
+            endpoint = f"/v1/computers/{guid}/trajectory"
             params = {"q": file_hash}
             ret_val, response = self._make_rest_call(endpoint, params=params)
             response_data[index]["file_execution_details"] = {"executed": False, "file_name": "", "file_path": "", "message": ""}
             if phantom.is_fail(ret_val):
-                response_data[index]["file_execution_details"]["message"] = "Unable to retrieve execution details. Details - {}".format(
-                    str(response)
-                )
+                response_data[index]["file_execution_details"]["message"] = f"Unable to retrieve execution details. Details - {response!s}"
             else:
                 events = response.get("data", {}).get("events") or []
 
@@ -276,19 +271,17 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Parameter connector_guid failed validation")
 
         http_method = "put" if quarantine_action == "start" else "delete"
-        ret_val, resp_json = self._make_rest_call("/v1/computers/{0}/isolation".format(c_guid), method=http_method)
+        ret_val, resp_json = self._make_rest_call(f"/v1/computers/{c_guid}/isolation", method=http_method)
         action_result.add_data(resp_json)
         if phantom.is_fail(ret_val):
-            return action_result.set_status(
-                phantom.APP_ERROR, "Failed to {0} quarantine on {1}. Details: {2}".format(quarantine_action, c_guid, str(resp_json))
-            )
+            return action_result.set_status(phantom.APP_ERROR, f"Failed to {quarantine_action} quarantine on {c_guid}. Details: {resp_json!s}")
         elif resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Success: {0} quarantine on {1}".format(quarantine_action, c_guid))
+        return action_result.set_status(phantom.APP_SUCCESS, f"Success: {quarantine_action} quarantine on {c_guid}")
 
     def _get_group_guid_by_name(self, group_name, action_result):
-        endpoint = "/v1/groups?name={0}".format(group_name)
+        endpoint = f"/v1/groups?name={group_name}"
 
         ret_val, resp_json = self._make_rest_call(endpoint)
 
@@ -315,7 +308,7 @@ class FireAMPConnector(BaseConnector):
         action_result.add_data(resp_json)
         action_result.update_summary(summary)
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Found {0} groups".format(len(resp_json.get("data", []))))
+        return action_result.set_status(phantom.APP_SUCCESS, "Found {} groups".format(len(resp_json.get("data", []))))
 
     def _list_policies(self, param):
         self.save_progress("Running action - list policies")
@@ -338,7 +331,7 @@ class FireAMPConnector(BaseConnector):
         action_result.add_data(resp_json)
         action_result.update_summary(summary)
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Found {0} policies".format(len(resp_json["data"])))
+        return action_result.set_status(phantom.APP_SUCCESS, "Found {} policies".format(len(resp_json["data"])))
 
     def _get_policy_guid_by_name(self, policy_name, action_result):
         endpoint = "/v1/policies"
@@ -387,7 +380,7 @@ class FireAMPConnector(BaseConnector):
 
         payload = json.dumps({"windows_policy_guid": policy_guid})
 
-        ret_val, resp_json = self._make_rest_call("/v1/groups/{0}".format(group_guid), data=payload, method="patch")
+        ret_val, resp_json = self._make_rest_call(f"/v1/groups/{group_guid}", data=payload, method="patch")
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
@@ -425,7 +418,7 @@ class FireAMPConnector(BaseConnector):
 
         payload = json.dumps({"group_guid": group_guid})
 
-        ret_val, resp_json = self._make_rest_call("/v1/computers/{0}".format(c_guid), data=payload, method="patch")
+        ret_val, resp_json = self._make_rest_call(f"/v1/computers/{c_guid}", data=payload, method="patch")
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
 
@@ -464,7 +457,7 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, AMP_FIND_DEVICE_ERR_MSG)
 
         if param.get("user"):
-            ret_val, resp_json = self._make_rest_call("/v1/computers/user_activity?q={0}".format(param.get("user")))
+            ret_val, resp_json = self._make_rest_call("/v1/computers/user_activity?q={}".format(param.get("user")))
 
             if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
                 return action_result.set_status(ret_val, resp_json)
@@ -477,7 +470,7 @@ class FireAMPConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_SUCCESS, "Unable to find endpoint by user")
 
             for datum in resp_json["data"]:
-                ret_val, resp_json = self._make_rest_call("/v1/computers/{0}".format(datum["connector_guid"]))
+                ret_val, resp_json = self._make_rest_call("/v1/computers/{}".format(datum["connector_guid"]))
                 if phantom.is_fail(ret_val):
                     return action_result.set_status(phantom.APP_ERROR, "Unable to get computer details")
                 elif resp_json == AMP_ENDPOINT_NOT_FOUND:
@@ -488,7 +481,6 @@ class FireAMPConnector(BaseConnector):
             resp_json = results_data
 
         else:
-
             endpoint = "/v1/computers"
 
             ret_val, resp_json = self._make_rest_call(endpoint, params=params)
@@ -513,7 +505,7 @@ class FireAMPConnector(BaseConnector):
         except ValueError:
             return action_result.set_status(phantom.APP_ERROR, "Parameter connector_guid failed validation")
 
-        endpoint = "/v1/computers/{0}".format(c_guid)
+        endpoint = f"/v1/computers/{c_guid}"
 
         self.save_progress("Making rest call to get device info")
 
@@ -550,7 +542,7 @@ class FireAMPConnector(BaseConnector):
         except ValueError:
             return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
 
-        endpoint = "/v1/file_lists/{0}/files/{1}".format(list_guid, sha256_hash)
+        endpoint = f"/v1/file_lists/{list_guid}/files/{sha256_hash}"
         action_result.update_summary({"file_added_to_list": False})
         ret_val, resp_json = self._make_rest_call(endpoint, method="post")
 
@@ -566,7 +558,7 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS, AMP_FILE_HASH_ADDED)
 
         else:
-            self.save_progress("Error occurred for action - block hash json_response: {0}".format(resp_json))
+            self.save_progress(f"Error occurred for action - block hash json_response: {resp_json}")
             return action_result.set_status(phantom.APP_ERROR, resp_json)
 
     def _handle_unblock_hash(self, param):
@@ -580,7 +572,7 @@ class FireAMPConnector(BaseConnector):
         except ValueError:
             return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
 
-        endpoint = "/v1/file_lists/{0}/files/{1}".format(list_guid, sha256_hash)
+        endpoint = f"/v1/file_lists/{list_guid}/files/{sha256_hash}"
         action_result.update_summary({"file_removed_from_list": False})
         self.save_progress("Making rest call to unblock hash")
         ret_val, resp_json = self._make_rest_call(endpoint, method="delete")
@@ -600,7 +592,6 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
 
     def _list_filelists(self, param):
-
         action_result = self.add_action_result(ActionResult(param))
         endpoint1 = "/v1/file_lists/application_blocking"
         endpoint2 = "/v1/file_lists/simple_custom_detections"
@@ -639,7 +630,7 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_list_guid_by_name(self, list_type, file_list_name, action_result):
-        endpoint = "/v1/file_lists/{0}".format(list_type)
+        endpoint = f"/v1/file_lists/{list_type}"
 
         ret_val, resp_json = self._make_rest_call(endpoint)
 
@@ -675,7 +666,7 @@ class FireAMPConnector(BaseConnector):
             except ValueError:
                 return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
 
-        endpoint = "/v1/file_lists/{0}/files/{1}".format(list_guid, param[AMP_JSON_HASH])
+        endpoint = f"/v1/file_lists/{list_guid}/files/{param[AMP_JSON_HASH]}"
 
         ret_val, resp_json = self._make_rest_call(endpoint, method="delete")
 
@@ -706,7 +697,7 @@ class FireAMPConnector(BaseConnector):
             except ValueError:
                 return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
 
-        endpoint = "/v1/file_lists/{0}/files/{1}".format(list_guid, param[AMP_JSON_HASH])
+        endpoint = f"/v1/file_lists/{list_guid}/files/{param[AMP_JSON_HASH]}"
 
         ret_val, resp_json = self._make_rest_call(endpoint)
 
@@ -734,14 +725,13 @@ class FireAMPConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
         else:
-
             try:
                 list_guid = param.get(AMP_JSON_LIST_GUID)
                 UUID(list_guid, version=4)
             except ValueError:
                 return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
 
-        endpoint = "/v1/file_lists/{0}/files".format(list_guid)
+        endpoint = f"/v1/file_lists/{list_guid}/files"
 
         action_result.update_summary({"total_hashes": 0})
 
@@ -774,7 +764,7 @@ class FireAMPConnector(BaseConnector):
                     phantom.APP_ERROR, "Please provide a valid non-negative integer value in the ‘days_back’ parameter"
                 )
 
-        endpoint = "/v1/computers/{}/trajectory{}{}".format(connector_guid, limit, hash_filter)
+        endpoint = f"/v1/computers/{connector_guid}/trajectory{limit}{hash_filter}"
 
         self.save_progress("making rest request to get device trajectory")
         ret_val, resp_json = self._make_rest_call(endpoint)
@@ -851,7 +841,7 @@ class FireAMPConnector(BaseConnector):
             except ValueError:
                 return action_result.set_status(phantom.APP_ERROR, "Parameter file_list_guid failed validation")
 
-        endpoint = "/v1/file_lists/{0}/files/{1}".format(list_guid, param[AMP_JSON_HASH])
+        endpoint = f"/v1/file_lists/{list_guid}/files/{param[AMP_JSON_HASH]}"
 
         ret_val, resp_json = self._make_rest_call(endpoint, method="post")
 
@@ -866,7 +856,6 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "File successfully added")
 
     def handle_action(self, param):
-
         action = self.get_action_identifier()
         ret_val = phantom.APP_SUCCESS
         if action == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY:
