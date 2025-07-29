@@ -351,6 +351,8 @@ class FireAMPConnector(BaseConnector):
     def _change_policy(self, param):
         action_result = self.add_action_result(ActionResult(param))
 
+        policy_guid = None
+        group_guid = None
         if param.get("group_name") and param.get("group_guid"):
             return action_result.set_status(phantom.APP_ERROR, "Provide either a group name or group guid, not both")
 
@@ -395,6 +397,7 @@ class FireAMPConnector(BaseConnector):
     def _change_group(self, param):
         action_result = self.add_action_result(ActionResult(param))
         c_guid = None
+        group_guid = None
 
         try:
             c_guid = param[AMP_JSON_CONNECTOR_GUID]  # Connector GUID
@@ -524,12 +527,12 @@ class FireAMPConnector(BaseConnector):
     def _handle_disallow_hash(self, param):
         self.save_progress("Running action - block hash")
         self.save_progress("Calling function block hash")
-        self._handle_unblock_hash(param)
+        return self._handle_unblock_hash(param)
 
     def _handle_allow_hash(self, param):
         self.save_progress("Running action - block hash")
         self.save_progress("calling function unblock hash")
-        self._handle_block_hash(param)
+        return self._handle_block_hash(param)
 
     def _handle_block_hash(self, param):
         self.save_progress("Running action - allow hash")
