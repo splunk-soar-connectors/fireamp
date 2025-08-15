@@ -1,9 +1,9 @@
 # FireAMP
 
-Publisher: Splunk \
-Connector Version: 2.1.13 \
-Product Vendor: Cisco Systems \
-Product Name: FireAMP \
+Publisher: Splunk <br>
+Connector Version: 2.1.13 <br>
+Product Vendor: Cisco Systems <br>
+Product Name: FireAMP <br>
 Minimum Product Version: 6.2.1
 
 This App allows for querying endpoints connected to Cisco FireAMP while also providing investigative hunting capabilities
@@ -45,36 +45,36 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration by attempting to connect and getting the version of the API endpoint \
-[list endpoints](#action-list-endpoints) - List all of the endpoints connected to FireAMP \
-[hunt file](#action-hunt-file) - Search for a file matching a SHA256 hash across all endpoints \
-[hunt ip](#action-hunt-ip) - Search for a given IP \
-[hunt url](#action-hunt-url) - Search for a given URL \
-[list groups](#action-list-groups) - List all of the groups are present in FireAMP \
-[list policies](#action-list-policies) - List all of the policies present in FireAMP \
-[change policy](#action-change-policy) - Updates group to given windows policy \
-[change group](#action-change-group) - Change the group of provided GUID endpoint \
-[unquarantine device](#action-unquarantine-device) - Stop host isolation based on connector GUID \
-[quarantine device](#action-quarantine-device) - Isolate host based on connector GUID \
-[find device](#action-find-device) - Finds system with search parameters \
-[get device info](#action-get-device-info) - Get information about a device, given its connector GUID \
-[block hash](#action-block-hash) - Add a file hash (sha256 only) to a file list specified by GUID \
-[unblock hash](#action-unblock-hash) - Remove a file hash (sha256 only) from a file list specified by GUID \
-[allow hash](#action-allow-hash) - Add a file hash (sha256 only) to a file list specified by GUID \
-[disallow hash](#action-disallow-hash) - Remove all sha256 file hashes from a file list specified by GUID \
-[list filelists](#action-list-filelists) - List all of the File Lists (application blocking & simple custom detections) in FireAMP \
-[get filelist](#action-get-filelist) - Get all of the hashes in a File List in FireAMP. Lists can be retrieved by UUID, or file list name and type \
-[remove listitem](#action-remove-listitem) - Removes file hash from file list \
-[add listitem](#action-add-listitem) - Add file hash as listitem to file list \
-[find listitem](#action-find-listitem) - Finds file hash in specified file list \
-[get device trajectory](#action-get-device-trajectory) - Retrieve trajectory info about a device \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration by attempting to connect and getting the version of the API endpoint <br>
+[list endpoints](#action-list-endpoints) - List all of the endpoints connected to FireAMP <br>
+[hunt file](#action-hunt-file) - Search for a file matching a SHA256 hash across all endpoints <br>
+[hunt ip](#action-hunt-ip) - Search for a given IP <br>
+[hunt url](#action-hunt-url) - Search for a given URL <br>
+[list groups](#action-list-groups) - List all of the groups are present in FireAMP <br>
+[list policies](#action-list-policies) - List all of the policies present in FireAMP <br>
+[change policy](#action-change-policy) - Updates group to given windows policy <br>
+[change group](#action-change-group) - Change the group of provided GUID endpoint <br>
+[unquarantine device](#action-unquarantine-device) - Stop host isolation based on connector GUID <br>
+[quarantine device](#action-quarantine-device) - Isolate host based on connector GUID <br>
+[find device](#action-find-device) - Finds system with search parameters <br>
+[get device info](#action-get-device-info) - Get information about a device, given its connector GUID <br>
+[block hash](#action-block-hash) - Add a file hash (sha256 only) to a file list specified by GUID <br>
+[unblock hash](#action-unblock-hash) - Remove a file hash (sha256 only) from a file list specified by GUID <br>
+[allow hash](#action-allow-hash) - Add a file hash (sha256 only) to a file list specified by GUID <br>
+[disallow hash](#action-disallow-hash) - Remove all sha256 file hashes from a file list specified by GUID <br>
+[list filelists](#action-list-filelists) - List all of the File Lists (application blocking & simple custom detections) in FireAMP <br>
+[get filelist](#action-get-filelist) - Get all of the hashes in a File List in FireAMP. Lists can be retrieved by UUID, or file list name and type <br>
+[remove listitem](#action-remove-listitem) - Removes file hash from file list <br>
+[add listitem](#action-add-listitem) - Add file hash as listitem to file list <br>
+[find listitem](#action-find-listitem) - Finds file hash in specified file list <br>
+[get device trajectory](#action-get-device-trajectory) - Retrieve trajectory info about a device <br>
 [get device events](#action-get-device-events) - Retrieve device events
 
 ## action: 'test connectivity'
 
 Validate the asset configuration by attempting to connect and getting the version of the API endpoint
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -89,7 +89,7 @@ No Output
 
 List all of the endpoints connected to FireAMP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -139,7 +139,7 @@ summary.total_objects_successful | numeric | | |
 
 Search for a file matching a SHA256 hash across all endpoints
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -182,7 +182,7 @@ summary.total_objects_successful | numeric | | |
 
 Search for a given IP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -219,7 +219,7 @@ summary.total_objects_successful | numeric | | |
 
 Search for a given URL
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -255,7 +255,7 @@ summary.total_objects_successful | numeric | | |
 
 List all of the groups are present in FireAMP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -287,7 +287,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all of the policies present in FireAMP
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -329,7 +329,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Updates group to given windows policy
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -362,7 +362,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Change the group of provided GUID endpoint
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -393,7 +393,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Stop host isolation based on connector GUID
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -425,7 +425,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Isolate host based on connector GUID
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -457,7 +457,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Finds system with search parameters
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 If finding by user, no other search options can be used. Additionally group name and group GUID are mutually exclusive search options.
@@ -535,7 +535,7 @@ summary.total_objects_successful | numeric | | |
 
 Get information about a device, given its connector GUID
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -584,7 +584,7 @@ summary.total_objects_successful | numeric | | |
 
 Add a file hash (sha256 only) to a file list specified by GUID
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -617,7 +617,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove a file hash (sha256 only) from a file list specified by GUID
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -646,7 +646,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add a file hash (sha256 only) to a file list specified by GUID
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -679,7 +679,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove all sha256 file hashes from a file list specified by GUID
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -708,7 +708,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all of the File Lists (application blocking & simple custom detections) in FireAMP
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -733,7 +733,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get all of the hashes in a File List in FireAMP. Lists can be retrieved by UUID, or file list name and type
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -779,7 +779,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Removes file hash from file list
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -810,7 +810,7 @@ action_result.summary.file_deleted | boolean | | True |
 
 Add file hash as listitem to file list
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -847,7 +847,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Finds file hash in specified file list
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -884,7 +884,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Retrieve trajectory info about a device
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -996,7 +996,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Retrieve device events
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
