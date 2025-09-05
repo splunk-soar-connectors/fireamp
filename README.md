@@ -1,7 +1,7 @@
 # FireAMP
 
 Publisher: Splunk <br>
-Connector Version: 2.1.13 <br>
+Connector Version: 2.1.14 <br>
 Product Vendor: Cisco Systems <br>
 Product Name: FireAMP <br>
 Minimum Product Version: 6.2.1
