@@ -1,2 +1,1 @@
 **Unreleased**
-* Fix `add listitem` action incorrectly marked as `read_only`
