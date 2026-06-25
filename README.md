@@ -811,7 +811,7 @@ action_result.summary.file_deleted | boolean | | True |
 Add file hash as listitem to file list
 
 Type: **correct** <br>
-Read only: **True**
+Read only: **False**
 
 #### Action Parameters
 
@@ -1172,7 +1172,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
