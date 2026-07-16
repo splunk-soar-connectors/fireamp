@@ -13,8 +13,12 @@
 # limitations under the License.
 
 import unittest
+from pathlib import Path
 
 from fireamp_security import canonical_uuid4, unique_exact_guid
+
+
+ROOT = Path(__file__).parent
 
 
 class FireAmpSecurityTests(unittest.TestCase):
@@ -40,6 +44,13 @@ class FireAmpSecurityTests(unittest.TestCase):
             unique_exact_guid(items, "isolation", "group")
         with self.assertRaises(ValueError):
             unique_exact_guid([*items, {"name": "Isolation", "guid": "duplicate"}], "Isolation", "group")
+
+    def test_not_found_transport_results_are_errors(self):
+        source = (ROOT / "fireamp_connector.py").read_text()
+
+        self.assertIn("return (phantom.APP_ERROR, AMP_ENDPOINT_NOT_FOUND)", source)
+        self.assertIn("return (phantom.APP_ERROR, AMP_FILE_LIST_NOT_FOUND)", source)
+        self.assertIn("return (phantom.APP_ERROR, AMP_FILE_UNBLOCK_NOT_FOUND)", source)
 
 
 if __name__ == "__main__":

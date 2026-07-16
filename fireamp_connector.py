@@ -109,12 +109,12 @@ class FireAMPConnector(BaseConnector):
 
         if r.status_code != 200 and r.status_code != 201 and r.status_code != 202:
             if r.reason == "Not Found" and "computers" in endpoint:
-                return (phantom.APP_SUCCESS, AMP_ENDPOINT_NOT_FOUND)
+                return (phantom.APP_ERROR, AMP_ENDPOINT_NOT_FOUND)
             if r.reason == "Not Found" and "file_lists" in endpoint:
                 if method == "post":
-                    return (phantom.APP_SUCCESS, AMP_FILE_LIST_NOT_FOUND)
+                    return (phantom.APP_ERROR, AMP_FILE_LIST_NOT_FOUND)
                 else:
-                    return (phantom.APP_SUCCESS, AMP_FILE_UNBLOCK_NOT_FOUND)
+                    return (phantom.APP_ERROR, AMP_FILE_UNBLOCK_NOT_FOUND)
             if r.status_code == 409 and "file_lists" in endpoint:
                 return (phantom.APP_SUCCESS, AMP_DUPLICATE_FILE_HASH)
 
