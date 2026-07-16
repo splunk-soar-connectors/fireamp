@@ -52,6 +52,15 @@ class FireAmpSecurityTests(unittest.TestCase):
         self.assertIn("return (phantom.APP_ERROR, AMP_FILE_LIST_NOT_FOUND)", source)
         self.assertIn("return (phantom.APP_ERROR, AMP_FILE_UNBLOCK_NOT_FOUND)", source)
 
+    def test_listing_actions_use_complete_pagination(self):
+        source = (ROOT / "fireamp_connector.py").read_text()
+
+        self.assertIn("while next_offset < total:", source)
+        self.assertIn('{**request_params, "offset": next_offset}', source)
+        self.assertIn('nested_key="items"', source)
+        self.assertIn('nested_key="events"', source)
+        self.assertGreaterEqual(source.count("_make_paginated_rest_call("), 12)
+
 
 if __name__ == "__main__":
     unittest.main()
