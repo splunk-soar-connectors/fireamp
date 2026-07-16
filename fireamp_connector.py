@@ -27,6 +27,7 @@ from phantom.base_connector import BaseConnector
 
 # Local Imports
 from fireamp_consts import *
+from fireamp_security import canonical_uuid4, unique_exact_guid
 
 
 class RetVal(tuple):
@@ -281,17 +282,15 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, f"Success: {quarantine_action} quarantine on {c_guid}")
 
     def _get_group_guid_by_name(self, group_name, action_result):
-        endpoint = f"/v1/groups?name={group_name}"
-
-        ret_val, resp_json = self._make_rest_call(endpoint)
+        ret_val, resp_json = self._make_rest_call("/v1/groups", params={"name": group_name})
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve group"), None
 
-        if not resp_json.get("data"):
-            return action_result.set_status(phantom.APP_ERROR, "Unable to find specified group"), None
-
-        return phantom.APP_SUCCESS, resp_json["data"][0]["guid"]
+        try:
+            return phantom.APP_SUCCESS, unique_exact_guid(resp_json.get("data", []), group_name, "group")
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc)), None
 
     def _list_groups(self, param):
         self.save_progress("Running action - list groups")
@@ -343,10 +342,10 @@ class FireAMPConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve policy"), None
 
-        if not resp_json.get("data"):
-            return action_result.set_status(phantom.APP_ERROR, "Unable to find specified policy"), None
-
-        return phantom.APP_SUCCESS, resp_json["data"][0]["guid"]
+        try:
+            return phantom.APP_SUCCESS, unique_exact_guid(resp_json.get("data", []), policy_name, "policy")
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc)), None
 
     def _change_policy(self, param):
         action_result = self.add_action_result(ActionResult(param))
@@ -370,7 +369,10 @@ class FireAMPConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
         elif param.get("group_guid"):
-            group_guid = param.get("group_guid")
+            try:
+                group_guid = canonical_uuid4(param.get("group_guid"), "group_guid")
+            except ValueError as exc:
+                return action_result.set_status(phantom.APP_ERROR, str(exc))
 
         if param.get("policy_name"):
             ret_val, policy_guid = self._get_policy_guid_by_name(param.get("policy_name"), action_result)
@@ -378,7 +380,10 @@ class FireAMPConnector(BaseConnector):
                 return action_result.get_status()
 
         elif param.get("policy_guid"):
-            policy_guid = param.get("policy_guid")
+            try:
+                policy_guid = canonical_uuid4(param.get("policy_guid"), "policy_guid")
+            except ValueError as exc:
+                return action_result.set_status(phantom.APP_ERROR, str(exc))
 
         payload = json.dumps({"windows_policy_guid": policy_guid})
 
@@ -460,7 +465,7 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, AMP_FIND_DEVICE_ERR_MSG)
 
         if param.get("user"):
-            ret_val, resp_json = self._make_rest_call("/v1/computers/user_activity?q={}".format(param.get("user")))
+            ret_val, resp_json = self._make_rest_call("/v1/computers/user_activity", params={"q": param.get("user")})
 
             if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
                 return action_result.set_status(ret_val, resp_json)
@@ -756,7 +761,10 @@ class FireAMPConnector(BaseConnector):
         self.save_progress("Running action - get device trajectory")
         action_result = self.add_action_result(ActionResult(param))
 
-        connector_guid = param["connector_guid"]
+        try:
+            connector_guid = canonical_uuid4(param["connector_guid"], "connector_guid")
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc))
         limit = "?limit={}".format(param.get("limit", 500))
         hash_filter = "&q=" + param.get("filter") if param.get("filter") else ""
         days_back = param.get("days_back")
