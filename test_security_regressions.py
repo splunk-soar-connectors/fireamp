@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import unittest
 from pathlib import Path
 
@@ -60,6 +61,13 @@ class FireAmpSecurityTests(unittest.TestCase):
         self.assertIn('nested_key="items"', source)
         self.assertIn('nested_key="events"', source)
         self.assertGreaterEqual(source.count("_make_paginated_rest_call("), 12)
+
+    def test_mutating_resource_actions_are_not_read_only(self):
+        manifest = json.loads((ROOT / "fireamp.json").read_text())
+        actions = {action["identifier"]: action for action in manifest["actions"]}
+
+        self.assertIs(actions["change_policy"]["read_only"], False)
+        self.assertIs(actions["change_group"]["read_only"], False)
 
 
 if __name__ == "__main__":
