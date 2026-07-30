@@ -798,8 +798,9 @@ class FireAMPConnector(BaseConnector):
             connector_guid = canonical_uuid4(param["connector_guid"], "connector_guid")
         except ValueError as exc:
             return action_result.set_status(phantom.APP_ERROR, str(exc))
-        limit = "?limit={}".format(param.get("limit", 500))
-        hash_filter = "&q=" + param.get("filter") if param.get("filter") else ""
+        query_params = {"limit": param.get("limit", 500)}
+        if param.get("filter"):
+            query_params["q"] = param.get("filter")
         days_back = param.get("days_back")
 
         if param.get("days_back"):
@@ -808,10 +809,10 @@ class FireAMPConnector(BaseConnector):
                     phantom.APP_ERROR, "Please provide a valid non-negative integer value in the ‘days_back’ parameter"
                 )
 
-        endpoint = f"/v1/computers/{connector_guid}/trajectory{limit}{hash_filter}"
+        endpoint = f"/v1/computers/{connector_guid}/trajectory"
 
         self.save_progress("making rest request to get device trajectory")
-        ret_val, resp_json = self._make_paginated_rest_call(endpoint, nested_key="events")
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint, params=query_params, nested_key="events")
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
 
