@@ -980,7 +980,7 @@
             "description": "Updates group to given windows policy",
             "type": "contain",
             "identifier": "change_policy",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "policy_guid": {
                     "data_type": "string",
@@ -1080,7 +1080,7 @@
             "description": "Change the group of provided GUID endpoint",
             "type": "investigate",
             "identifier": "change_group",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "connector_guid": {
                     "data_type": "string",

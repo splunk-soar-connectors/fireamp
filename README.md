@@ -330,7 +330,7 @@ summary.total_objects_successful | numeric | | 1 |
 Updates group to given windows policy
 
 Type: **contain** <br>
-Read only: **True**
+Read only: **False**
 
 #### Action Parameters
 
@@ -363,7 +363,7 @@ summary.total_objects_successful | numeric | | 1 |
 Change the group of provided GUID endpoint
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
 #### Action Parameters
 

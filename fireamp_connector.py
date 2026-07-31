@@ -27,6 +27,7 @@ from phantom.base_connector import BaseConnector
 
 # Local Imports
 from fireamp_consts import *
+from fireamp_security import canonical_uuid4, unique_exact_guid
 
 
 class RetVal(tuple):
@@ -108,12 +109,12 @@ class FireAMPConnector(BaseConnector):
 
         if r.status_code != 200 and r.status_code != 201 and r.status_code != 202:
             if r.reason == "Not Found" and "computers" in endpoint:
-                return (phantom.APP_SUCCESS, AMP_ENDPOINT_NOT_FOUND)
+                return (phantom.APP_ERROR, AMP_ENDPOINT_NOT_FOUND)
             if r.reason == "Not Found" and "file_lists" in endpoint:
                 if method == "post":
-                    return (phantom.APP_SUCCESS, AMP_FILE_LIST_NOT_FOUND)
+                    return (phantom.APP_ERROR, AMP_FILE_LIST_NOT_FOUND)
                 else:
-                    return (phantom.APP_SUCCESS, AMP_FILE_UNBLOCK_NOT_FOUND)
+                    return (phantom.APP_ERROR, AMP_FILE_UNBLOCK_NOT_FOUND)
             if r.status_code == 409 and "file_lists" in endpoint:
                 return (phantom.APP_SUCCESS, AMP_DUPLICATE_FILE_HASH)
 
@@ -135,6 +136,39 @@ class FireAMPConnector(BaseConnector):
         except Exception as e:
             # Some error parsing response
             return (phantom.APP_ERROR, f"Error while parsing response: {e}")
+
+    def _make_paginated_rest_call(self, endpoint, params=None, nested_key=None):
+        """Collect every result page using the API's total and offset metadata."""
+        request_params = dict(params or {})
+        ret_val, response = self._make_rest_call(endpoint, params=request_params)
+        if phantom.is_fail(ret_val) or not isinstance(response, dict):
+            return ret_val, response
+
+        data = response.get("data")
+        items = data.get(nested_key) if nested_key and isinstance(data, dict) else data
+        if not isinstance(items, list):
+            return phantom.APP_SUCCESS, response
+
+        results = response.get("metadata", {}).get("results", {})
+        try:
+            total = int(results.get("total", len(items)))
+            next_offset = int(request_params.get("offset", 0)) + len(items)
+        except (TypeError, ValueError):
+            return phantom.APP_ERROR, "Invalid pagination metadata returned by Secure Endpoint"
+
+        while next_offset < total:
+            page_params = {**request_params, "offset": next_offset}
+            page_ret_val, page = self._make_rest_call(endpoint, params=page_params)
+            if phantom.is_fail(page_ret_val):
+                return page_ret_val, page
+            page_data = page.get("data") if isinstance(page, dict) else None
+            page_items = page_data.get(nested_key) if nested_key and isinstance(page_data, dict) else page_data
+            if not isinstance(page_items, list) or not page_items:
+                return phantom.APP_ERROR, "Secure Endpoint pagination stopped before all results were returned"
+            items.extend(page_items)
+            next_offset += len(page_items)
+
+        return phantom.APP_SUCCESS, response
 
     def _test_asset_connectivity(self):
         action_result = ActionResult()
@@ -171,7 +205,7 @@ class FireAMPConnector(BaseConnector):
         action_result.update_summary({"total_endpoints": 0})
 
         self.save_progress("sending http request to list endpoint")
-        ret_val, resp_json = self._make_rest_call(endpoint)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint)
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
 
@@ -185,7 +219,7 @@ class FireAMPConnector(BaseConnector):
     def _hunt_action(self, action_result, query, check_execution=False):
         endpoint = "/v1/computers/activity"
         params = {"q": query}
-        ret_val, response = self._make_rest_call(endpoint, params=params)
+        ret_val, response = self._make_paginated_rest_call(endpoint, params=params)
 
         if phantom.is_fail(ret_val) or response == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, response)
@@ -205,7 +239,7 @@ class FireAMPConnector(BaseConnector):
         for index, guid in guids:
             endpoint = f"/v1/computers/{guid}/trajectory"
             params = {"q": file_hash}
-            ret_val, response = self._make_rest_call(endpoint, params=params)
+            ret_val, response = self._make_paginated_rest_call(endpoint, params=params, nested_key="events")
             response_data[index]["file_execution_details"] = {"executed": False, "file_name": "", "file_path": "", "message": ""}
             if phantom.is_fail(ret_val):
                 response_data[index]["file_execution_details"]["message"] = f"Unable to retrieve execution details. Details - {response!s}"
@@ -281,24 +315,22 @@ class FireAMPConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, f"Success: {quarantine_action} quarantine on {c_guid}")
 
     def _get_group_guid_by_name(self, group_name, action_result):
-        endpoint = f"/v1/groups?name={group_name}"
-
-        ret_val, resp_json = self._make_rest_call(endpoint)
+        ret_val, resp_json = self._make_paginated_rest_call("/v1/groups", params={"name": group_name})
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve group"), None
 
-        if not resp_json.get("data"):
-            return action_result.set_status(phantom.APP_ERROR, "Unable to find specified group"), None
-
-        return phantom.APP_SUCCESS, resp_json["data"][0]["guid"]
+        try:
+            return phantom.APP_SUCCESS, unique_exact_guid(resp_json.get("data", []), group_name, "group")
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc)), None
 
     def _list_groups(self, param):
         self.save_progress("Running action - list groups")
         action_result = self.add_action_result(ActionResult(param))
 
         self.save_progress("Sending http request for list groups")
-        ret_val, resp_json = self._make_rest_call("/v1/groups")
+        ret_val, resp_json = self._make_paginated_rest_call("/v1/groups")
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
@@ -321,7 +353,7 @@ class FireAMPConnector(BaseConnector):
             params["name[]"] = param.get("name")
 
         self.save_progress("sending http request to list policies")
-        ret_val, resp_json = self._make_rest_call("/v1/policies", params=params)
+        ret_val, resp_json = self._make_paginated_rest_call("/v1/policies", params=params)
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
@@ -338,15 +370,15 @@ class FireAMPConnector(BaseConnector):
 
         params = {"name[]": policy_name, "product[]": "windows"}
 
-        ret_val, resp_json = self._make_rest_call(endpoint, params=params)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint, params=params)
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve policy"), None
 
-        if not resp_json.get("data"):
-            return action_result.set_status(phantom.APP_ERROR, "Unable to find specified policy"), None
-
-        return phantom.APP_SUCCESS, resp_json["data"][0]["guid"]
+        try:
+            return phantom.APP_SUCCESS, unique_exact_guid(resp_json.get("data", []), policy_name, "policy")
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc)), None
 
     def _change_policy(self, param):
         action_result = self.add_action_result(ActionResult(param))
@@ -370,7 +402,10 @@ class FireAMPConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
         elif param.get("group_guid"):
-            group_guid = param.get("group_guid")
+            try:
+                group_guid = canonical_uuid4(param.get("group_guid"), "group_guid")
+            except ValueError as exc:
+                return action_result.set_status(phantom.APP_ERROR, str(exc))
 
         if param.get("policy_name"):
             ret_val, policy_guid = self._get_policy_guid_by_name(param.get("policy_name"), action_result)
@@ -378,7 +413,10 @@ class FireAMPConnector(BaseConnector):
                 return action_result.get_status()
 
         elif param.get("policy_guid"):
-            policy_guid = param.get("policy_guid")
+            try:
+                policy_guid = canonical_uuid4(param.get("policy_guid"), "policy_guid")
+            except ValueError as exc:
+                return action_result.set_status(phantom.APP_ERROR, str(exc))
 
         payload = json.dumps({"windows_policy_guid": policy_guid})
 
@@ -460,7 +498,7 @@ class FireAMPConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, AMP_FIND_DEVICE_ERR_MSG)
 
         if param.get("user"):
-            ret_val, resp_json = self._make_rest_call("/v1/computers/user_activity?q={}".format(param.get("user")))
+            ret_val, resp_json = self._make_paginated_rest_call("/v1/computers/user_activity", params={"q": param.get("user")})
 
             if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
                 return action_result.set_status(ret_val, resp_json)
@@ -486,7 +524,7 @@ class FireAMPConnector(BaseConnector):
         else:
             endpoint = "/v1/computers"
 
-            ret_val, resp_json = self._make_rest_call(endpoint, params=params)
+            ret_val, resp_json = self._make_paginated_rest_call(endpoint, params=params)
 
             if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
                 return action_result.set_status(ret_val, resp_json)
@@ -601,7 +639,7 @@ class FireAMPConnector(BaseConnector):
 
         action_result.update_summary({"total_lists": 0})
 
-        ret_val, resp_json = self._make_rest_call(endpoint1)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint1)
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
         if resp_json.get("data"):
@@ -616,7 +654,7 @@ class FireAMPConnector(BaseConnector):
             total_lists = metadata.get("results", {}).get("total", 0)
             action_result.update_summary({"total_lists": total_lists})
 
-        ret_val, resp_json = self._make_rest_call(endpoint2)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint2)
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
         if resp_json.get("data"):
@@ -635,7 +673,7 @@ class FireAMPConnector(BaseConnector):
     def _get_list_guid_by_name(self, list_type, file_list_name, action_result):
         endpoint = f"/v1/file_lists/{list_type}"
 
-        ret_val, resp_json = self._make_rest_call(endpoint)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint)
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, str(resp_json)), None
@@ -738,7 +776,7 @@ class FireAMPConnector(BaseConnector):
 
         action_result.update_summary({"total_hashes": 0})
 
-        ret_val, resp_json = self._make_rest_call(endpoint)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint, nested_key="items")
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
         elif resp_json == AMP_FILE_LIST_NOT_FOUND:
@@ -756,9 +794,13 @@ class FireAMPConnector(BaseConnector):
         self.save_progress("Running action - get device trajectory")
         action_result = self.add_action_result(ActionResult(param))
 
-        connector_guid = param["connector_guid"]
-        limit = "?limit={}".format(param.get("limit", 500))
-        hash_filter = "&q=" + param.get("filter") if param.get("filter") else ""
+        try:
+            connector_guid = canonical_uuid4(param["connector_guid"], "connector_guid")
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc))
+        query_params = {"limit": param.get("limit", 500)}
+        if param.get("filter"):
+            query_params["q"] = param.get("filter")
         days_back = param.get("days_back")
 
         if param.get("days_back"):
@@ -767,10 +809,10 @@ class FireAMPConnector(BaseConnector):
                     phantom.APP_ERROR, "Please provide a valid non-negative integer value in the ‘days_back’ parameter"
                 )
 
-        endpoint = f"/v1/computers/{connector_guid}/trajectory{limit}{hash_filter}"
+        endpoint = f"/v1/computers/{connector_guid}/trajectory"
 
         self.save_progress("making rest request to get device trajectory")
-        ret_val, resp_json = self._make_rest_call(endpoint)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint, params=query_params, nested_key="events")
         if phantom.is_fail(ret_val) or resp_json == AMP_ENDPOINT_NOT_FOUND:
             return action_result.set_status(ret_val, resp_json)
 
@@ -812,7 +854,7 @@ class FireAMPConnector(BaseConnector):
         endpoint = "/v1/events"
 
         self.save_progress("making rest request to get device event")
-        ret_val, resp_json = self._make_rest_call(endpoint, params=query_params)
+        ret_val, resp_json = self._make_paginated_rest_call(endpoint, params=query_params)
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, resp_json)
 
