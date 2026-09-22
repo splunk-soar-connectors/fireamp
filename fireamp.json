@@ -2864,7 +2864,7 @@
             "description": "Removes file hash from file list",
             "type": "correct",
             "identifier": "remove_listitem",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "hash": {
                     "data_type": "string",
