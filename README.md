@@ -780,7 +780,7 @@ summary.total_objects_successful | numeric | | 1 |
 Removes file hash from file list
 
 Type: **correct** <br>
-Read only: **True**
+Read only: **False**
 
 #### Action Parameters
 
