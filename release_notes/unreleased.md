@@ -1,2 +1,2 @@
 **Unreleased**
-* [Codex] Fix `remove listitem` action incorrectly marked as `read_only`
+* Fix `remove listitem` action incorrectly marked as `read_only`
