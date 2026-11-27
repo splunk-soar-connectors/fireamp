@@ -1,12 +1,12 @@
 # FireAMP
 
 Publisher: Splunk <br>
-Connector Version: 2.1.17 <br>
+Connector Version: 3.0.0 <br>
 Product Vendor: Cisco Systems <br>
 Product Name: FireAMP <br>
-Minimum Product Version: 6.2.1
+Minimum Product Version: 7.0.0
 
-This App allows for querying endpoints connected to Cisco FireAMP while also providing investigative hunting capabilities
+Query Cisco FireAMP endpoints and investigate endpoint activity
 
 #### To Generate API Credentials
 
@@ -33,6 +33,53 @@ This App allows for querying endpoints connected to Cisco FireAMP while also pro
 - If Base URL is not provided, **https://api.amp.sourcefire.com/** will be used as the Base URL by
   default.
 
+#### Make request
+
+Use **make request** for Secure Endpoint API endpoints without a dedicated action. Requests use
+HTTP Basic authentication with this asset's API Client ID and API Key. The credential's permissions
+and the target API determine which operations are available.
+
+Provide an API path relative to **Base URL**, including its API version, such as `/v1/computers`,
+`/v1/events`, or `/v1/computers/{connector_guid}/isolation`. Replace placeholders with actual values.
+Absolute URLs are rejected. Redirects are returned without being followed.
+
+- **http_method**: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, or `OPTIONS`.
+- **headers**: an optional JSON object with string values, such as
+  `{"Content-Type":"application/json"}`. Asset authentication sets the Authorization header.
+- **query_parameters**: an optional JSON object such as `{"hostname[]":"host.example.com"}` or a
+  query string such as `?limit=100&offset=0`. Parameters can also appear in the endpoint.
+- **body**: the request body. JSON is validated when the content type is JSON. For form or text
+  bodies, set the corresponding Content-Type header and supply the encoded body.
+- **timeout**: a positive number of seconds; the default is 30.
+- **verify_ssl**: whether to verify the server certificate; the default is true.
+
+The action returns the HTTP `status_code` and raw `response_body`, including HTTP error responses.
+Transport failures fail the action. A request retrieves one API response; follow pagination through
+additional requests when needed.
+
+Examples:
+
+| Operation | Method | Endpoint | Additional input |
+| --- | --- | --- | --- |
+| List endpoints | GET | `/v1/computers` | query_parameters: `{"limit":100}` |
+| Hunt an IP | GET | `/v1/computers/activity` | query_parameters: `{"q":"192.0.2.1"}` |
+| Get events | GET | `/v1/events` | query_parameters: `{"connector_guid":"<guid>"}` |
+| Isolate endpoint | PUT | `/v1/computers/<guid>/isolation` | None |
+| End isolation | DELETE | `/v1/computers/<guid>/isolation` | None |
+| Change group | PATCH | `/v1/computers/<guid>` | body: `{"group_guid":"<group-guid>"}` |
+| Add a hash | POST | `/v1/file_lists/<list-guid>/files/<sha256>` | None |
+| Remove a hash | DELETE | `/v1/file_lists/<list-guid>/files/<sha256>` | None |
+
+#### SDK compatibility
+
+This version requires Splunk SOAR 7.0.0 or later and Python 3.13. IP address arrays, group GUID arrays,
+and technique array fields use item recommendation paths ending in `.*`. Isolation availability is
+a boolean. Invalid legacy object paths and summaries that the actions never produced are omitted.
+The source comments and contract tests identify those corrections.
+
+`executed_only` remains a legacy input for **get device trajectory** and does not filter results.
+`limit` controls the API page size for named paginated actions; they collect all available pages.
+
 ### Configuration variables
 
 This table lists the configuration variables required to operate FireAMP. These variables are specified when configuring a FireAMP asset in Splunk SOAR.
@@ -45,7 +92,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration by attempting to connect and getting the version of the API endpoint <br>
+[test connectivity](#action-test-connectivity) - Verify the configured Cisco Secure Endpoint credentials. <br>
+[make request](#action-make-request) - Call a Secure Endpoint API path using the asset's credentials. <br>
 [list endpoints](#action-list-endpoints) - List all of the endpoints connected to FireAMP <br>
 [hunt file](#action-hunt-file) - Search for a file matching a SHA256 hash across all endpoints <br>
 [hunt ip](#action-hunt-ip) - Search for a given IP <br>
@@ -72,10 +120,12 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ## action: 'test connectivity'
 
-Validate the asset configuration by attempting to connect and getting the version of the API endpoint
+Verify the configured Cisco Secure Endpoint credentials.
 
 Type: **test** <br>
 Read only: **True**
+
+Basic test for app.
 
 #### Action Parameters
 
@@ -83,7 +133,51 @@ No parameters are required for this action
 
 #### Action Output
 
-No Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'make request'
+
+Call a Secure Endpoint API path using the asset's credentials.
+
+Type: **generic** <br>
+Read only: **False**
+
+'make request' action for the app. Used to handle arbitrary HTTP requests with the app's asset
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**http_method** | required | The HTTP method to use for the request. | string | |
+**endpoint** | required | The endpoint to send the request to. | string | |
+**headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
+**query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
+**body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
+**timeout** | optional | The timeout for the request in seconds. | numeric | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. Default is True. | boolean | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.http_method | string | | |
+action_result.parameter.endpoint | string | | |
+action_result.parameter.headers | string | | |
+action_result.parameter.query_parameters | string | | |
+action_result.parameter.body | string | | |
+action_result.parameter.timeout | numeric | | |
+action_result.parameter.verify_ssl | boolean | | |
+action_result.data.\*.status_code | numeric | | 200 404 500 |
+action_result.data.\*.response_body | string | | {"key": "value"} |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'list endpoints'
 
@@ -100,20 +194,21 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.data.\*.data.\*.active | boolean | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.data.\*.data.\*.active | boolean | | True False |
 action_result.data.\*.data.\*.connector_guid | string | `fireamp connector guid` | |
 action_result.data.\*.data.\*.connector_version | string | | |
-action_result.data.\*.data.\*.demo | boolean | | True |
+action_result.data.\*.data.\*.demo | boolean | | True False |
 action_result.data.\*.data.\*.external_ip | string | `ip` | |
 action_result.data.\*.data.\*.group_guid | string | | |
 action_result.data.\*.data.\*.hostname | string | `host name` | Demo_AMP |
-action_result.data.\*.data.\*.install_date | string | | |
-action_result.data.\*.data.\*.internal_ips | string | `ip` | |
-action_result.data.\*.data.\*.is_compromised | boolean | | |
-action_result.data.\*.data.\*.isolation.available | boolean | | |
-action_result.data.\*.data.\*.isolation.status | string | | |
-action_result.data.\*.data.\*.last_seen | string | | |
+action_result.data.\*.data.\*.install_date | string | | 2021-02-27T07:00:07Z |
+action_result.data.\*.data.\*.internal_ips.\* | string | `ip` | |
+action_result.data.\*.data.\*.is_compromised | boolean | | True False |
+action_result.data.\*.data.\*.isolation.available | boolean | | True False |
+action_result.data.\*.data.\*.isolation.status | string | | not_isolated |
+action_result.data.\*.data.\*.last_seen | string | | 2021-03-01T08:37:03Z |
 action_result.data.\*.data.\*.links.computer | string | | |
 action_result.data.\*.data.\*.links.group | string | `url` | |
 action_result.data.\*.data.\*.links.trajectory | string | | https://api.amp.sourcefire.com/v1/computers/05f5a5e6-6281-4582-a2c9-6d28d451cd9e/trajectory |
@@ -123,7 +218,7 @@ action_result.data.\*.data.\*.operating_system | string | | |
 action_result.data.\*.data.\*.orbital.status | string | | not_enabled |
 action_result.data.\*.data.\*.policy.guid | string | | |
 action_result.data.\*.data.\*.policy.name | string | | |
-action_result.data.\*.data.\*.windows_processor_id | string | | |
+action_result.data.\*.data.\*.windows_processor_id | string | | 8e03697a1d25bf4 |
 action_result.data.\*.metadata.links.self | string | | |
 action_result.data.\*.metadata.results.current_item_count | numeric | | |
 action_result.data.\*.metadata.results.index | numeric | | |
@@ -131,9 +226,8 @@ action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | |
 action_result.summary.total_endpoints | numeric | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'hunt file'
 
@@ -153,12 +247,13 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.check_execution | boolean | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.hash | string | `hash` `sha256` | |
-action_result.data.\*.data.\*.active | boolean | | |
+action_result.parameter.check_execution | boolean | | |
+action_result.data.\*.data.\*.active | boolean | | True False |
 action_result.data.\*.data.\*.connector_guid | string | `fireamp connector guid` | |
-action_result.data.\*.data.\*.file_execution_details.executed | boolean | | |
+action_result.data.\*.data.\*.file_execution_details.executed | boolean | | True False |
 action_result.data.\*.data.\*.file_execution_details.file_name | string | `file path` | |
 action_result.data.\*.data.\*.file_execution_details.file_path | string | `file name` | |
 action_result.data.\*.data.\*.file_execution_details.message | string | | |
@@ -166,7 +261,7 @@ action_result.data.\*.data.\*.hostname | string | `host name` | |
 action_result.data.\*.data.\*.links.computer | string | `url` | |
 action_result.data.\*.data.\*.links.group | string | `url` | |
 action_result.data.\*.data.\*.links.trajectory | string | | https://api.amp.sourcefire.com/v1/computers/120da585-44f6-4b50-8d29-e5a87b7548a0/trajectory?q=ed01ebfbc9eb5bbea545af4d01bf5f1071661840480439c6e5babe8e080e41aa |
-action_result.data.\*.data.\*.windows_processor_id | string | | |
+action_result.data.\*.data.\*.windows_processor_id | string | | 04ba26ed5813f97 |
 action_result.data.\*.metadata.links.self | string | `url` | |
 action_result.data.\*.metadata.results.current_item_count | numeric | | |
 action_result.data.\*.metadata.results.index | numeric | | |
@@ -174,9 +269,8 @@ action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | |
 action_result.summary.device_count | numeric | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'hunt ip'
 
@@ -195,15 +289,16 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.ip | string | `ip` | |
-action_result.data.\*.data.\*.active | boolean | | |
+action_result.data.\*.data.\*.active | boolean | | True False |
 action_result.data.\*.data.\*.connector_guid | string | `fireamp connector guid` | |
 action_result.data.\*.data.\*.hostname | string | `host name` | |
 action_result.data.\*.data.\*.links.computer | string | `url` | |
 action_result.data.\*.data.\*.links.group | string | `url` | |
 action_result.data.\*.data.\*.links.trajectory | string | `url` | |
-action_result.data.\*.data.\*.windows_processor_id | string | | |
+action_result.data.\*.data.\*.windows_processor_id | string | | 8792fb4e63d51a0 |
 action_result.data.\*.metadata.links.self | string | `url` | |
 action_result.data.\*.metadata.results.current_item_count | numeric | | |
 action_result.data.\*.metadata.results.index | numeric | | |
@@ -211,9 +306,8 @@ action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | |
 action_result.summary.device_count | numeric | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'hunt url'
 
@@ -232,9 +326,10 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.url | string | `url` | |
-action_result.data.\*.data.\*.active | boolean | | |
+action_result.data.\*.data.\*.active | boolean | | True False |
 action_result.data.\*.data.\*.connector_guid | string | `fireamp connector guid` | |
 action_result.data.\*.data.\*.hostname | string | `host name` | |
 action_result.data.\*.data.\*.links.computer | string | `url` | |
@@ -247,9 +342,8 @@ action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | |
 action_result.summary.device_count | numeric | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'list groups'
 
@@ -266,7 +360,8 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.data.\*.data.\*.description | string | | |
 action_result.data.\*.data.\*.guid | string | | |
 action_result.data.\*.data.\*.links.group | string | `url` | |
@@ -279,7 +374,6 @@ action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | v1.2.0 |
 action_result.summary.group_count | numeric | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -301,17 +395,17 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.name | string | | |
-action_result.parameter.product | string | | windows |
-action_result.data.\*.data.\*.default | boolean | | |
+action_result.parameter.product | string | | |
+action_result.data.\*.data.\*.default | boolean | | True False |
 action_result.data.\*.data.\*.description | string | | |
 action_result.data.\*.data.\*.guid | string | | |
 action_result.data.\*.data.\*.links.policy | string | `url` | |
 action_result.data.\*.data.\*.name | string | | |
 action_result.data.\*.data.\*.product | string | | |
 action_result.data.\*.data.\*.serial_number | numeric | | 23 |
-action_result.data.\*.data.install_date | string | `url` | |
 action_result.data.\*.metadata.links.next | string | `url` | |
 action_result.data.\*.metadata.links.prev | string | `url` | |
 action_result.data.\*.metadata.links.self | string | | https://api.amp.sourcefire.com/v1/policies?name%5B%5D=windows |
@@ -321,7 +415,6 @@ action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | v1.2.0 |
 action_result.summary.policy_count | numeric | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -345,16 +438,16 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.group_guid | string | | |
-action_result.parameter.group_name | string | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.policy_guid | string | | |
 action_result.parameter.policy_name | string | | |
-action_result.data.\*.policy_changed | boolean | | |
+action_result.parameter.group_guid | string | | |
+action_result.parameter.group_name | string | | |
+action_result.data.\*.policy_changed | boolean | | True False |
 action_result.data.\*.policy_guid | string | | |
-action_result.summary.policy_changed | boolean | | |
+action_result.summary.policy_changed | boolean | | True False |
 action_result.summary.policy_guid | string | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -377,15 +470,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.connector_guid | string | `fireamp connector guid` | |
 action_result.parameter.group_guid | string | | |
 action_result.parameter.group_name | string | | |
-action_result.data.\*.group_changed | boolean | | |
+action_result.data.\*.group_changed | boolean | | True False |
 action_result.data.\*.group_guid | string | | |
-action_result.summary.group_changed | boolean | | |
+action_result.summary.group_changed | boolean | | True False |
 action_result.summary.group_guid | string | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -406,18 +499,16 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.connector_guid | string | `fireamp connector guid` | |
-action_result.data | string | | |
-action_result.data.\*.data.available | boolean | | |
+action_result.data.\*.data.available | boolean | | True False |
 action_result.data.\*.data.comment | string | | |
-action_result.data.\*.version | string | | |
 action_result.data.\*.data.isolated_by | string | | User |
 action_result.data.\*.data.status | string | | |
 action_result.data.\*.data.unlock_code | string | | |
+action_result.data.\*.version | string | | |
 action_result.data.\*.metadata.links.self | string | | |
-action_result.summary | string | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -438,18 +529,16 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.connector_guid | string | `fireamp connector guid` | |
-action_result.data | string | | |
-action_result.data.\*.data.available | string | | |
+action_result.data.\*.data.available | boolean | | True False |
 action_result.data.\*.data.comment | string | | |
 action_result.data.\*.data.isolated_by | string | | User |
-action_result.data.\*.version | string | | |
 action_result.data.\*.data.status | string | | |
 action_result.data.\*.data.unlock_code | string | | |
+action_result.data.\*.version | string | | |
 action_result.data.\*.metadata.links.self | string | | |
-action_result.summary | string | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -477,24 +566,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.external_ip | string | `ip` | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.group_guid | string | | |
 action_result.parameter.group_name | string | | |
-action_result.parameter.hostname | string | | |
-action_result.parameter.internal_ip | string | `ip` | |
 action_result.parameter.user | string | | |
-action_result.data.\*.data.\*.active | boolean | | |
+action_result.parameter.hostname | string | | |
+action_result.parameter.external_ip | string | `ip` | |
+action_result.parameter.internal_ip | string | `ip` | |
+action_result.data.\*.data.\*.active | boolean | | True False |
 action_result.data.\*.data.\*.connector_guid | string | `fireamp connector guid` | |
 action_result.data.\*.data.\*.connector_version | string | | |
-action_result.data.\*.data.\*.demo | boolean | | True |
+action_result.data.\*.data.\*.demo | boolean | | True False |
 action_result.data.\*.data.\*.external_ip | string | `ip` | |
 action_result.data.\*.data.\*.group_guid | string | | |
 action_result.data.\*.data.\*.hostname | string | `host name` | |
 action_result.data.\*.data.\*.install_date | string | | 2021-04-20T09:55:41Z |
-action_result.data.\*.data.\*.internal_ips | string | `ip` | |
-action_result.data.\*.data.\*.is_compromised | boolean | | False |
-action_result.data.\*.data.\*.isolation.available | boolean | | True |
+action_result.data.\*.data.\*.internal_ips.\* | string | `ip` | |
+action_result.data.\*.data.\*.is_compromised | boolean | | True False |
+action_result.data.\*.data.\*.isolation.available | boolean | | True False |
 action_result.data.\*.data.\*.isolation.status | string | | not_isolated |
 action_result.data.\*.data.\*.last_seen | string | | 2021-05-20T09:55:41Z |
 action_result.data.\*.data.\*.links.computer | string | `url` | |
@@ -507,14 +597,6 @@ action_result.data.\*.data.\*.orbital.status | string | | not_enabled |
 action_result.data.\*.data.\*.policy.guid | string | | |
 action_result.data.\*.data.\*.policy.name | string | | |
 action_result.data.\*.data.\*.windows_processor_id | string | | 65a9fd1b78043e2 |
-action_result.data.\*.data.demo | boolean | | True |
-action_result.data.\*.data.install_date | string | | 2021-04-20T09:55:41Z |
-action_result.data.\*.data.is_compromised | boolean | | False |
-action_result.data.\*.data.isolation.available | boolean | | False |
-action_result.data.\*.data.isolation.status | string | | not_isolated |
-action_result.data.\*.data.last_seen | string | | 2021-05-20T09:55:41Z |
-action_result.data.\*.data.orbital.status | string | | not_enabled |
-action_result.data.\*.data.windows_processor_id | string | | 198a4d60e2f7b53 |
 action_result.data.\*.links.self | string | | https://api.amp.sourcefire.com/v1/computers/user_activity?q=johndoe |
 action_result.data.\*.metadata.links.self | string | `url` | |
 action_result.data.\*.metadata.results.current_item_count | numeric | | 25 |
@@ -527,9 +609,8 @@ action_result.data.\*.results.items_per_page | numeric | | 500 |
 action_result.data.\*.results.total | numeric | | 7 |
 action_result.data.\*.version | string | | |
 action_result.summary.total_endpoints | numeric | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'get device info'
 
@@ -548,26 +629,27 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.connector_guid | string | `fireamp connector guid` | |
-action_result.data.\*.data.active | boolean | | |
+action_result.data.\*.data.active | boolean | | True False |
 action_result.data.\*.data.connector_guid | string | `fireamp connector guid` | |
 action_result.data.\*.data.connector_version | string | | |
 action_result.data.\*.data.external_ip | string | `ip` | |
 action_result.data.\*.data.group_guid | string | | |
 action_result.data.\*.data.hostname | string | `host name` | |
-action_result.data.\*.data.internal_ips | string | `ip` | |
+action_result.data.\*.data.internal_ips.\* | string | `ip` | |
 action_result.data.\*.data.links.computer | string | `url` | |
-action_result.data.\*.data.demo | boolean | | True |
-action_result.data.\*.data.orbital.status | string | | not_enabled |
-action_result.data.\*.data.isolation.status | string | | not_isolated |
-action_result.data.\*.data.isolation.available | boolean | | True |
-action_result.data.\*.data.last_seen | string | | 2021-05-20T09:55:41Z |
-action_result.data.\*.data.install_date | string | | 2021-04-20T09:55:41Z |
-action_result.data.\*.data.is_compromised | boolean | | False |
-action_result.data.\*.data.windows_processor_id | string | | 198a4d60e2f7b53 |
 action_result.data.\*.data.links.group | string | `url` | |
 action_result.data.\*.data.links.trajectory | string | `url` | |
+action_result.data.\*.data.demo | boolean | | True False |
+action_result.data.\*.data.orbital.status | string | | not_enabled |
+action_result.data.\*.data.isolation.status | string | | not_isolated |
+action_result.data.\*.data.isolation.available | boolean | | True False |
+action_result.data.\*.data.last_seen | string | | 2021-05-20T09:55:41Z |
+action_result.data.\*.data.install_date | string | | 2021-04-20T09:55:41Z |
+action_result.data.\*.data.is_compromised | boolean | | True False |
+action_result.data.\*.data.windows_processor_id | string | | 198a4d60e2f7b53 |
 action_result.data.\*.data.network_addresses.\*.ip | string | `ip` | |
 action_result.data.\*.data.network_addresses.\*.mac | string | `mac address` | |
 action_result.data.\*.data.operating_system | string | | |
@@ -576,9 +658,8 @@ action_result.data.\*.data.policy.name | string | | |
 action_result.data.\*.metadata.links.self | string | `url` | |
 action_result.data.\*.version | string | | |
 action_result.summary.total_endpoints | numeric | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'block hash'
 
@@ -598,9 +679,10 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
-action_result.parameter.hash | string | `hash` `sha256` | 27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
+action_result.parameter.hash | string | `hash` `sha256` | |
 action_result.data.\*.data.description | string | | |
 action_result.data.\*.data.links.file_list | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e |
 action_result.data.\*.data.sha256 | string | `hash` `sha256` | 27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
@@ -608,8 +690,6 @@ action_result.data.\*.data.source | string | | Created by entering SHA-256 via P
 action_result.data.\*.metadata.links.self | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e/files/27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
 action_result.data.\*.version | string | | v1.2.0 |
 action_result.summary.file_added_to_list | boolean | | True False |
-action_result.summary.file_hash_added | boolean | | |
-action_result.message | string | | Hash added to list |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -631,14 +711,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
-action_result.parameter.hash | string | `hash` `sha256` | 27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
+action_result.parameter.hash | string | `hash` `sha256` | |
 action_result.data.\*.data.description | string | | |
 action_result.data.\*.metadata.links.self | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e/files/27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
 action_result.data.\*.version | string | | v1.2.0 |
 action_result.summary.file_removed_from_list | boolean | | True False |
-action_result.message | string | | Hash removed from list |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -660,9 +740,10 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
-action_result.parameter.hash | string | `hash` `sha256` | 27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
+action_result.parameter.hash | string | `hash` `sha256` | |
 action_result.data.\*.data.description | string | | |
 action_result.data.\*.data.links.file_list | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e |
 action_result.data.\*.data.sha256 | string | `hash` `sha256` | 27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
@@ -670,8 +751,6 @@ action_result.data.\*.data.source | string | | Created by entering SHA-256 via P
 action_result.data.\*.metadata.links.self | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e/files/27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
 action_result.data.\*.version | string | | v1.2.0 |
 action_result.summary.file_added_to_list | boolean | | True False |
-action_result.summary.file_hash_added | boolean | | |
-action_result.message | string | | Hash added to list |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -693,14 +772,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
-action_result.parameter.hash | string | `hash` `sha256` | 27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
+action_result.parameter.hash | string | `hash` `sha256` | |
 action_result.data.\*.data.description | string | | |
 action_result.data.\*.metadata.links.self | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e/files/27b10529a38e0fd3128a84a543de108dc83c2b0e786ea81df8a8dc4a9e47a2e4 |
 action_result.data.\*.version | string | | v1.2.0 |
 action_result.summary.file_removed_from_list | boolean | | True False |
-action_result.message | string | | Hash removed from list |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -719,13 +798,13 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.data.\*.guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
 action_result.data.\*.links.file_list | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e |
 action_result.data.\*.name | string | | Test hash list |
 action_result.data.\*.type | string | | application_blocking |
-action_result.summary.total_lists | numeric | | 3 |
-action_result.message | string | | Total lists: 3 |
+action_result.summary.total_lists | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -748,8 +827,9 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
 action_result.parameter.name | string | | |
 action_result.parameter.type | string | | |
 action_result.data.\*.data.guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
@@ -766,12 +846,7 @@ action_result.data.\*.metadata.results.index | numeric | | |
 action_result.data.\*.metadata.results.items_per_page | numeric | | |
 action_result.data.\*.metadata.results.total | numeric | | |
 action_result.data.\*.version | string | | |
-action_result.summary.file_count | numeric | | |
-action_result.summary.file_list_guid | string | | |
-action_result.summary.file_list_name | string | | |
-action_result.summary.total_endpoints | numeric | | |
-action_result.summary.total_hashes | numeric | | 1 |
-action_result.message | string | | Total hashes: 2 |
+action_result.summary.total_hashes | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -795,16 +870,16 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.hash | string | `sha256` | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
 action_result.parameter.name | string | | |
 action_result.parameter.type | string | | |
-action_result.data.\*.file_deleted | boolean | | |
-action_result.message | string | | File deleted from list |
+action_result.data.\*.file_deleted | boolean | | True False |
+action_result.summary.file_deleted | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
-action_result.summary.file_deleted | boolean | | True |
 
 ## action: 'add listitem'
 
@@ -826,20 +901,18 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.hash | string | `sha256` | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
 action_result.parameter.name | string | | |
 action_result.parameter.type | string | | |
 action_result.data.\*.data.links.file_list | string | | https://api.amp.sourcefire.com/v1/file_lists/93265c88-0b72-40eb-8187-7fc58b5e31f8 |
 action_result.data.\*.data.sha256 | string | | f69fc2fd5bd864916a3285f9e3a691f6f060d430d251d18944ce3e69066d04b7 |
 action_result.data.\*.data.source | string | | Created by entering SHA-256 via Public api. |
-action_result.data.\*.file_added | boolean | | True |
 action_result.data.\*.metadata.links.self | string | | https://api.amp.sourcefire.com/v1/file_lists/93265c88-0b72-40eb-8187-7fc58b5e31f8/files/f69fc2fd5bd864916a3285f9e3a691f6f060d430d251d18944ce3e69066d04b7 |
 action_result.data.\*.version | string | | v1.2.0 |
-action_result.summary.file_added | boolean | | True |
-action_result.summary.file_deleted | boolean | | |
-action_result.message | string | | |
+action_result.summary.file_added | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -863,9 +936,10 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.file_list_guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.hash | string | `sha256` | |
+action_result.parameter.file_list_guid | string | `fireamp file list guid` | |
 action_result.parameter.name | string | | |
 action_result.parameter.type | string | | |
 action_result.data.\*.data.description | string | | Manual add |
@@ -875,8 +949,7 @@ action_result.data.\*.data.sha256 | string | `sha256` | ad3f8b790a9012c3ab113501
 action_result.data.\*.data.source | string | | Created by entering SHA-256 via Web from 23.251.93.203. |
 action_result.data.\*.metadata.links.self | string | `url` | |
 action_result.data.\*.version | string | | |
-action_result.summary.file_found | boolean | | |
-action_result.message | string | | File found |
+action_result.summary.file_found | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -901,22 +974,23 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.connector_guid | string | `fireamp connector guid` | 0cdd56bc-e299-4547-ae1d-148aae71de03 |
-action_result.parameter.days_back | numeric | | |
-action_result.parameter.executed_only | boolean | | True False |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.connector_guid | string | `fireamp connector guid` | |
 action_result.parameter.filter | string | `sha256` `url` `ip` | |
-action_result.parameter.limit | numeric | | 100 |
+action_result.parameter.days_back | numeric | | |
+action_result.parameter.executed_only | boolean | | |
+action_result.parameter.limit | numeric | | |
 action_result.data.\*.computer.active | boolean | | True False |
 action_result.data.\*.computer.connector_guid | string | | 0cdd56bc-e299-4547-ae1d-148aae71de03 |
 action_result.data.\*.computer.connector_version | string | | 7.2.3.11648 |
-action_result.data.\*.computer.demo | boolean | | True |
+action_result.data.\*.computer.demo | boolean | | True False |
 action_result.data.\*.computer.external_ip | string | `ip` | 35.161.149.114 |
 action_result.data.\*.computer.group_guid | string | | a0841d16-1b37-4eac-9154-8ed475534f9e |
 action_result.data.\*.computer.hostname | string | `host name` | commando.skynet.lab |
 action_result.data.\*.computer.install_date | string | | 2019-10-18T20:49:35Z |
-action_result.data.\*.computer.internal_ips | string | | 172.18.85.49 |
-action_result.data.\*.computer.is_compromised | boolean | | False |
+action_result.data.\*.computer.internal_ips.\* | string | | 172.18.85.49 |
+action_result.data.\*.computer.is_compromised | boolean | | True False |
 action_result.data.\*.computer.isolation.available | boolean | | True False |
 action_result.data.\*.computer.isolation.status | string | | not_isolated |
 action_result.data.\*.computer.links.computer | string | `url` | https://api.amp.sourcefire.com/v1/computers/0cdd56bc-e299-4547-ae1d-148aae71de03 |
@@ -931,18 +1005,23 @@ action_result.data.\*.computer.policy.name | string | | Protect-No-Proxy |
 action_result.data.\*.computer.windows_processor_id | string | | 1f8bfbff000306e4 |
 action_result.data.\*.events.\*.file.parent.identity.md5 | string | | 38ae1b3c38faef56fe4907922f0385ba |
 action_result.data.\*.events.\*.file.parent.identity.sha1 | string | | 84123a3decdaa217e3588a1de59fe6cee1998004 |
+action_result.data.\*.events.\*.file.parent.identity.sha256 | string | `sha256` | 8bcfd8420d721cc0ca50c1bef653e63e013ce201dfcca5927228eb25c9abf606 |
 action_result.data.\*.events.\*.file.parent.file_name | string | | explorer.exe |
 action_result.data.\*.events.\*.file.parent.process_id | numeric | | 2632 |
-action_result.data.\*.events.\*.scan.clean | boolean | | True |
+action_result.data.\*.events.\*.file.parent.disposition | string | | Unknown |
+action_result.data.\*.events.\*.file.disposition | string | | Unknown |
+action_result.data.\*.events.\*.file.file_name | string | `file name` `sha1` | prefs-1.js |
+action_result.data.\*.events.\*.file.file_path | string | `file name` | /c:/users/maclemon/appdata/roaming/mozilla/firefox/profiles/x6berjvs.default-release/prefs-1.js |
+action_result.data.\*.events.\*.file.file_type | string | | Script |
+action_result.data.\*.events.\*.file.identity.md5 | string | | 41476df3138717868118d8542cf3d1d6 |
+action_result.data.\*.events.\*.file.identity.sha1 | string | | 5ca4bef8de6def53519d4b22632675bb4c1e470b |
+action_result.data.\*.events.\*.file.identity.sha256 | string | `sha256` | a36f0d4c081b86ecca210a64cf67c948bd3535e719e255638602a92c94eb9abc |
+action_result.data.\*.events.\*.scan.clean | boolean | | True False |
 action_result.data.\*.events.\*.scan.description | string | | Flash Scan |
 action_result.data.\*.events.\*.scan.scanned_files | numeric | | 2872 |
 action_result.data.\*.events.\*.scan.scanned_paths | numeric | | 0 |
 action_result.data.\*.events.\*.scan.scanned_processes | numeric | | 49 |
 action_result.data.\*.events.\*.scan.malicious_detections | numeric | | 0 |
-action_result.data.\*.data.description | string | | Manual add |
-action_result.data.\*.data.guid | string | `fireamp file list guid` | 81486554-e6ef-4a57-90ee-bc564a98a94e |
-action_result.data.\*.data.sha256 | string | `sha256` | ad3f8b790a9012c3ab113501a0d31b6ca5af6a07f7ac5ee745c4bbd5757e2cb3 |
-action_result.data.\*.data.source | string | | Created by entering SHA-256 via Web from 23.251.93.203. |
 action_result.data.\*.events.\*.cloud_ioc.description | string | | PowerShell is a Windows utility that allows access to many Microsoft APIs within a shell environment. In this case, a script attempted to download a file or script to the local system and then execute it. Malware authors may use this to download items, rename them, execute and delete them with a single command. |
 action_result.data.\*.events.\*.cloud_ioc.short_description | string | | W32.PowershellDownloadedExecutable.ioc |
 action_result.data.\*.events.\*.command_line.arguments | string | | -Embedding |
@@ -954,18 +1033,8 @@ action_result.data.\*.events.\*.id | string | | 6812581201115613122 |
 action_result.data.\*.events.\*.severity | string | | |
 action_result.data.\*.events.\*.detection_id | string | | |
 action_result.data.\*.events.\*.event_type | string | | |
-action_result.data.\*.data.links.file_list | string | `url` | https://api.amp.sourcefire.com/v1/file_lists/81486554-e6ef-4a57-90ee-bc564a98a94e |
 action_result.data.\*.events.\*.event_type_id | numeric | | 553648155 |
-action_result.data.\*.events.\*.file.disposition | string | | Unknown |
-action_result.data.\*.events.\*.file.file_name | string | `file name` `sha1` | prefs-1.js |
-action_result.data.\*.events.\*.file.file_path | string | `file name` | /c:/users/maclemon/appdata/roaming/mozilla/firefox/profiles/x6berjvs.default-release/prefs-1.js |
-action_result.data.\*.events.\*.file.file_type | string | | Script |
-action_result.data.\*.events.\*.file.identity.md5 | string | | 41476df3138717868118d8542cf3d1d6 |
-action_result.data.\*.events.\*.file.identity.sha1 | string | | 5ca4bef8de6def53519d4b22632675bb4c1e470b |
-action_result.data.\*.events.\*.file.identity.sha256 | string | `sha256` | a36f0d4c081b86ecca210a64cf67c948bd3535e719e255638602a92c94eb9abc |
-action_result.data.\*.events.\*.file.parent.disposition | string | | Unknown |
-action_result.data.\*.events.\*.file.parent.identity.sha256 | string | `sha256` | 8bcfd8420d721cc0ca50c1bef653e63e013ce201dfcca5927228eb25c9abf606 |
-action_result.data.\*.events.\*.group_guids | string | | a0841d16-1b37-4eac-9154-8ed475534f9e |
+action_result.data.\*.events.\*.group_guids.\* | string | | a0841d16-1b37-4eac-9154-8ed475534f9e |
 action_result.data.\*.events.\*.isolation.duration | numeric | | 46 |
 action_result.data.\*.events.\*.network_info.dirty_url | string | `url` | http://settings-win.data.microsoft.com:443 |
 action_result.data.\*.events.\*.network_info.local_ip | string | `ip` | 192.168.66.238 |
@@ -987,8 +1056,7 @@ action_result.data.\*.events.\*.vulnerabilities.\*.url | string | | https://web.
 action_result.data.\*.events.\*.vulnerabilities.\*.version | string | | 2013 |
 action_result.data.\*.metadata.links.self | string | `url` | https://api.amp.sourcefire.com/v1/computers/0cdd56bc-e299-4547-ae1d-148aae71de03/trajectory?limit=100 |
 action_result.data.\*.version | string | | v1.2.0 |
-action_result.summary.file_found | boolean | | |
-action_result.message | string | | File found |
+action_result.summary.total_trajectories | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -1016,16 +1084,16 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.application_sha256 | string | `hash` | |
-action_result.parameter.connector_guid | string | `fireamp connector guid` | 71841cfb-1892-46b5-b7d7-b18d068246b4 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.connector_guid | string | `fireamp connector guid` | |
 action_result.parameter.detection_sha256 | string | `hash` | |
-action_result.parameter.event_type | string | | |
+action_result.parameter.application_sha256 | string | `hash` | |
 action_result.parameter.group_guid | string | | |
-action_result.parameter.limit | numeric | | |
-action_result.parameter.limit | numeric | | 10 |
-action_result.parameter.offset | numeric | | |
 action_result.parameter.start_date | string | | |
+action_result.parameter.offset | numeric | | |
+action_result.parameter.event_type | string | | |
+action_result.parameter.limit | numeric | | |
 action_result.data.\*.events.\*.cloud_ioc.description | string | | A named pipe was created in a manner similar to that used for local privilege escalation through named pipe impersonation. Tools such as meterpreter often use this technique to escalate to NT Authority\\System. |
 action_result.data.\*.events.\*.cloud_ioc.short_description | string | | W32.PossibleNamedPipeImpersonation.ioc |
 action_result.data.\*.events.\*.computer.active | boolean | | True False |
@@ -1036,9 +1104,9 @@ action_result.data.\*.events.\*.computer.links.group | string | `url` | https://
 action_result.data.\*.events.\*.computer.links.trajectory | string | `url` | https://api.amp.sourcefire.com/v1/computers/71841cfb-1892-46b5-b7d7-b18d068246b4/trajectory |
 action_result.data.\*.events.\*.computer.network_addresses.\*.ip | string | | 105.186.48.59 |
 action_result.data.\*.events.\*.computer.network_addresses.\*.mac | string | | 0e:12:c4:de:70:ee |
-action_result.data.\*.events.\*.event_type | string | | Uninstall |
 action_result.data.\*.events.\*.computer.user | string | | pwned@W10-CUCKOO-MC |
 action_result.data.\*.events.\*.computer.hostname | string | `host name` | W10-CUCKOO-MC |
+action_result.data.\*.events.\*.event_type | string | | Uninstall |
 action_result.data.\*.events.\*.id | numeric | | 17965765 |
 action_result.data.\*.events.\*.connector_guid | string | | 71841cfb-1892-46b5-b7d7-b18d068246b4 |
 action_result.data.\*.events.\*.date | string | | 2020-04-06T13:03:50+00:00 |
@@ -1066,7 +1134,7 @@ action_result.data.\*.events.\*.file.parent.identity.md5 | string | `md5` | f7dc
 action_result.data.\*.events.\*.file.parent.identity.sha1 | string | `sha1` | c893cf07e5f65749cd66e17d9523638b132c87b2 |
 action_result.data.\*.events.\*.file.parent.identity.sha256 | string | `sha256` | c5e88d778c0b118d49bef467ed059c09b61deea505d2a3d5ca1dcc0a5cdf752f |
 action_result.data.\*.events.\*.file.parent.process_id | numeric | | 3124 |
-action_result.data.\*.events.\*.group_guids | string | | 20701584-ff6f-4b78-afed-e2e801366a82 |
+action_result.data.\*.events.\*.group_guids.\* | string | | 20701584-ff6f-4b78-afed-e2e801366a82 |
 action_result.data.\*.events.\*.isolation.duration | numeric | | 46 |
 action_result.data.\*.events.\*.isolation.user | string | | User |
 action_result.data.\*.events.\*.network_info.dirty_url | string | | http://dak1otavola1ndos.com/h/index.php |
@@ -1082,7 +1150,7 @@ action_result.data.\*.events.\*.network_info.parent.identity.sha256 | string | |
 action_result.data.\*.events.\*.network_info.parent.process_id | numeric | | 3136 |
 action_result.data.\*.events.\*.network_info.remote_ip | string | | 75.102.25.76 |
 action_result.data.\*.events.\*.network_info.remote_port | numeric | | 443 |
-action_result.data.\*.events.\*.scan.clean | boolean | | True |
+action_result.data.\*.events.\*.scan.clean | boolean | | True False |
 action_result.data.\*.events.\*.scan.description | string | | C:\\Program Files\\DVD Maker |
 action_result.data.\*.events.\*.scan.malicious_detections | numeric | | 0 |
 action_result.data.\*.events.\*.scan.scanned_files | numeric | | 9 |
@@ -1091,21 +1159,21 @@ action_result.data.\*.events.\*.scan.scanned_processes | numeric | | 0 |
 action_result.data.\*.events.\*.severity | string | | Medium |
 action_result.data.\*.events.\*.start_date | string | | 2016-09-22T19:39:33+00:00 |
 action_result.data.\*.events.\*.start_timestamp | numeric | | 1474573173 |
-action_result.data.\*.events.\*.tactics.\*.description | string | | <p>The adversary is trying to avoid being detected.</p> <p>Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. Techniques used for defense evasion include uninstalling/disabling security software or obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes to hide and masquerade their malware. Other tactics’ techniques are cross-listed here when those techniques include the added benefit of subverting defenses.</p> |
+action_result.data.\*.events.\*.tactics.\*.description | string | | <p>The adversary is trying to avoid being detected.</p> <p>Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. Techniques used for defense evasion include uninstalling/disabling security software or obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes to hide and masquerade their malware. Other tactics' techniques are cross-listed here when those techniques include the added benefit of subverting defenses.</p> |
 action_result.data.\*.events.\*.tactics.\*.external_id | string | | TA0005 |
 action_result.data.\*.events.\*.tactics.\*.mitre_name | string | | tactic |
 action_result.data.\*.events.\*.tactics.\*.mitre_url | string | | https://attack.mitre.org/tactics/TA0005 |
 action_result.data.\*.events.\*.tactics.\*.name | string | | Defense Evasion |
-action_result.data.\*.events.\*.techniques.\*.data_sources | string | | File: File Content, File: File Metadata, File: File Creation, Process: Process Creation, Command: Command Execution, Command: Command Execution |
+action_result.data.\*.events.\*.techniques.\*.data_sources.\* | string | | File: File Content, File: File Metadata, File: File Creation, Process: Process Creation, Command: Command Execution, Command: Command Execution |
 action_result.data.\*.events.\*.techniques.\*.description | string | | <p>Adversaries may attempt to make an executable or file difficult to discover or analyze by encrypting, encoding, or otherwise obfuscating its contents on the system or in transit. This is common behavior that can be used across different platforms and the network to evade defenses.</p> <p>Payloads may be compressed, archived, or encrypted in order to avoid detection. These payloads may be used during Initial Access or later to mitigate detection. Sometimes a user's action may be required to open and <a href="https://attack.mitre.org/techniques/T1140">Deobfuscate/Decode Files or Information</a> for <a href="https://attack.mitre.org/techniques/T1204">User Execution</a>. The user may also be required to input a password to open a password protected compressed/encrypted file that was provided by the adversary. (Citation: Volexity PowerDuke November 2016) Adversaries may also used compressed or archived scripts, such as JavaScript.</p> <p>Portions of files can also be encoded to hide the plain-text strings that would otherwise help defenders with discovery. (Citation: Linux/Cdorked.A We Live Security Analysis) Payloads may also be split into separate, seemingly benign files that only reveal malicious functionality when reassembled. (Citation: Carbon Black Obfuscation Sept 2016)</p> <p>Adversaries may also obfuscate commands executed from payloads or directly via a <a href="https://attack.mitre.org/techniques/T1059">Command and Scripting Interpreter</a>. Environment variables, aliases, characters, and other platform/language specific semantics can be used to evade signature based detections and application control mechanisms. (Citation: FireEye Obfuscation June 2017) (Citation: FireEye Revoke-Obfuscation July 2017)(Citation: PaloAlto EncodedCommand March 2017)</p> |
 action_result.data.\*.events.\*.techniques.\*.external_id | string | | T1027 |
 action_result.data.\*.events.\*.techniques.\*.mitre_name | string | | technique |
 action_result.data.\*.events.\*.techniques.\*.mitre_url | string | | https://attack.mitre.org/techniques/T1027 |
 action_result.data.\*.events.\*.techniques.\*.name | string | | Obfuscated Files or Information |
-action_result.data.\*.events.\*.techniques.\*.permissions | string | | |
-action_result.data.\*.events.\*.techniques.\*.platforms | string | | Linux, macOS, Windows |
-action_result.data.\*.events.\*.techniques.\*.system_requirements | string | | |
-action_result.data.\*.events.\*.techniques.\*.tactics_names | string | | Defense Evasion |
+action_result.data.\*.events.\*.techniques.\*.permissions.\* | string | | |
+action_result.data.\*.events.\*.techniques.\*.platforms.\* | string | | Linux, macOS, Windows |
+action_result.data.\*.events.\*.techniques.\*.system_requirements.\* | string | | |
+action_result.data.\*.events.\*.techniques.\*.tactics_names.\* | string | | Defense Evasion |
 action_result.data.\*.events.\*.threat_hunting.incident_end_time | numeric | | 1621498185 |
 action_result.data.\*.events.\*.threat_hunting.incident_hunt_guid | string | | 00712651-e534-4851-ac6d-d4017f9c1714 |
 action_result.data.\*.events.\*.threat_hunting.incident_remediation | string | | We recommend the following:
@@ -1134,21 +1202,21 @@ action_result.data.\*.events.\*.threat_hunting.incident_summary | string | | The
 - Certutil.exe executes via the earlier scheduled task, due to COM hijacking, it launches a PowerShell script (simply shows a dialog box demonstrating arbitrary code execution) |
   action_result.data.\*.events.\*.threat_hunting.incident_title | string | | Certutil.exe Executed by Schtasks.exe (Demo Data) |
   action_result.data.\*.events.\*.threat_hunting.severity | string | | critical |
-  action_result.data.\*.events.\*.threat_hunting.tactics.\*.description | string | | <p>The adversary is trying to avoid being detected.</p> <p>Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. Techniques used for defense evasion include uninstalling/disabling security software or obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes to hide and masquerade their malware. Other tactics’ techniques are cross-listed here when those techniques include the added benefit of subverting defenses.</p> |
+  action_result.data.\*.events.\*.threat_hunting.tactics.\*.description | string | | <p>The adversary is trying to avoid being detected.</p> <p>Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. Techniques used for defense evasion include uninstalling/disabling security software or obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes to hide and masquerade their malware. Other tactics' techniques are cross-listed here when those techniques include the added benefit of subverting defenses.</p> |
   action_result.data.\*.events.\*.threat_hunting.tactics.\*.external_id | string | | TA0005 |
   action_result.data.\*.events.\*.threat_hunting.tactics.\*.mitre_name | string | | tactic |
   action_result.data.\*.events.\*.threat_hunting.tactics.\*.mitre_url | string | | https://attack.mitre.org/tactics/TA0005 |
   action_result.data.\*.events.\*.threat_hunting.tactics.\*.name | string | | Defense Evasion |
-  action_result.data.\*.events.\*.threat_hunting.techniques.\*.data_sources | string | | File: File Content, File: File Metadata, File: File Creation, Process: Process Creation, Command: Command Execution, Command: Command Execution |
+  action_result.data.\*.events.\*.threat_hunting.techniques.\*.data_sources.\* | string | | File: File Content, File: File Metadata, File: File Creation, Process: Process Creation, Command: Command Execution, Command: Command Execution |
   action_result.data.\*.events.\*.threat_hunting.techniques.\*.description | string | | <p>Adversaries may attempt to make an executable or file difficult to discover or analyze by encrypting, encoding, or otherwise obfuscating its contents on the system or in transit. This is common behavior that can be used across different platforms and the network to evade defenses.</p> <p>Payloads may be compressed, archived, or encrypted in order to avoid detection. These payloads may be used during Initial Access or later to mitigate detection. Sometimes a user's action may be required to open and <a href="https://attack.mitre.org/techniques/T1140">Deobfuscate/Decode Files or Information</a> for <a href="https://attack.mitre.org/techniques/T1204">User Execution</a>. The user may also be required to input a password to open a password protected compressed/encrypted file that was provided by the adversary. (Citation: Volexity PowerDuke November 2016) Adversaries may also used compressed or archived scripts, such as JavaScript.</p> <p>Portions of files can also be encoded to hide the plain-text strings that would otherwise help defenders with discovery. (Citation: Linux/Cdorked.A We Live Security Analysis) Payloads may also be split into separate, seemingly benign files that only reveal malicious functionality when reassembled. (Citation: Carbon Black Obfuscation Sept 2016)</p> <p>Adversaries may also obfuscate commands executed from payloads or directly via a <a href="https://attack.mitre.org/techniques/T1059">Command and Scripting Interpreter</a>. Environment variables, aliases, characters, and other platform/language specific semantics can be used to evade signature based detections and application control mechanisms. (Citation: FireEye Obfuscation June 2017) (Citation: FireEye Revoke-Obfuscation July 2017)(Citation: PaloAlto EncodedCommand March 2017)</p> |
   action_result.data.\*.events.\*.threat_hunting.techniques.\*.external_id | string | | T1027 |
   action_result.data.\*.events.\*.threat_hunting.techniques.\*.mitre_name | string | | technique |
   action_result.data.\*.events.\*.threat_hunting.techniques.\*.mitre_url | string | | https://attack.mitre.org/techniques/T1027 |
   action_result.data.\*.events.\*.threat_hunting.techniques.\*.name | string | | Obfuscated Files or Information |
-  action_result.data.\*.events.\*.threat_hunting.techniques.\*.permissions | string | | |
-  action_result.data.\*.events.\*.threat_hunting.techniques.\*.platforms | string | | Linux, macOS, Windows |
-  action_result.data.\*.events.\*.threat_hunting.techniques.\*.system_requirements | string | | |
-  action_result.data.\*.events.\*.threat_hunting.techniques.\*.tactics_names | string | | Defense Evasion |
+  action_result.data.\*.events.\*.threat_hunting.techniques.\*.permissions.\* | string | | |
+  action_result.data.\*.events.\*.threat_hunting.techniques.\*.platforms.\* | string | | Linux, macOS, Windows |
+  action_result.data.\*.events.\*.threat_hunting.techniques.\*.system_requirements.\* | string | | |
+  action_result.data.\*.events.\*.threat_hunting.techniques.\*.tactics_names.\* | string | | Defense Evasion |
   action_result.data.\*.events.\*.timestamp | numeric | | 1586178230 |
   action_result.data.\*.events.\*.timestamp_nanoseconds | numeric | | 619724887 |
   action_result.data.\*.events.\*.vulnerabilities.\*.cve | string | | CVE-2015-7204 |
@@ -1163,10 +1231,9 @@ action_result.data.\*.events.\*.threat_hunting.incident_summary | string | | The
   action_result.data.\*.metadata.results.items_per_page | numeric | | 10 |
   action_result.data.\*.metadata.results.total | numeric | | 14595 |
   action_result.data.\*.version | string | | v1.2.0 |
-  action_result.summary.file_found | boolean | | |
-  action_result.message | string | | File found |
-  summary.total_objects | numeric | | |
-  summary.total_objects_successful | numeric | | |
+  action_result.summary.total_events | numeric | | |
+  summary.total_objects | numeric | | 1 |
+  summary.total_objects_successful | numeric | | 1 |
 
 ______________________________________________________________________
 
