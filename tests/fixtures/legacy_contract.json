@@ -1,0 +1,2806 @@
+{
+  "test_asset_connectivity": {
+    "action": "test connectivity",
+    "type": "test",
+    "read_only": true,
+    "parameters": {},
+    "outputs": {}
+  },
+  "list_endpoints": {
+    "action": "list endpoints",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {},
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.*.connector_version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.demo": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.data.*.install_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.internal_ips": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.is_compromised": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.isolation.available": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.isolation.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.last_seen": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.links.computer": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.trajectory": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.network_addresses.*.ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.network_addresses.*.mac": {
+        "data_type": "string",
+        "contains": [
+          "mac address"
+        ]
+      },
+      "action_result.data.*.data.*.operating_system": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.orbital.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.policy.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.policy.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.total_endpoints": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "hunt_file": {
+    "action": "hunt file",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "hash",
+          "sha256"
+        ],
+        "primary": true
+      },
+      "check_execution": {
+        "data_type": "boolean"
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.check_execution": {
+        "data_type": "boolean"
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.*.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.*.file_execution_details.executed": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.file_execution_details.file_name": {
+        "data_type": "string",
+        "contains": [
+          "file path"
+        ]
+      },
+      "action_result.data.*.data.*.file_execution_details.file_path": {
+        "data_type": "string",
+        "contains": [
+          "file name"
+        ]
+      },
+      "action_result.data.*.data.*.file_execution_details.message": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.data.*.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.trajectory": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.device_count": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "hunt_ip": {
+    "action": "hunt ip",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "ip": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "ip"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.*.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.data.*.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.trajectory": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.device_count": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "hunt_url": {
+    "action": "hunt url",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "url": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "url"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.url": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.*.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.data.*.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.trajectory": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.device_count": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "list_groups": {
+    "action": "list groups",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {},
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.source": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.group_count": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "list_policies": {
+    "action": "list policies",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "name": {
+        "data_type": "string"
+      },
+      "product": {
+        "data_type": "string"
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.product": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.default": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.links.policy": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.product": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.serial_number": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.data.install_date": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.links.next": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.links.prev": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.policy_count": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "change_policy": {
+    "action": "change policy",
+    "type": "contain",
+    "read_only": false,
+    "parameters": {
+      "policy_guid": {
+        "data_type": "string"
+      },
+      "policy_name": {
+        "data_type": "string"
+      },
+      "group_guid": {
+        "data_type": "string"
+      },
+      "group_name": {
+        "data_type": "string"
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.parameter.group_name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.policy_guid": {
+        "data_type": "string"
+      },
+      "action_result.parameter.policy_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.policy_changed": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.policy_guid": {
+        "data_type": "string"
+      },
+      "action_result.summary.policy_changed": {
+        "data_type": "boolean"
+      },
+      "action_result.summary.policy_guid": {
+        "data_type": "string"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "change_group": {
+    "action": "change group",
+    "type": "investigate",
+    "read_only": false,
+    "parameters": {
+      "connector_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp connector guid"
+        ],
+        "primary": true
+      },
+      "group_guid": {
+        "data_type": "string"
+      },
+      "group_name": {
+        "data_type": "string"
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.parameter.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.parameter.group_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.group_changed": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.summary.group_changed": {
+        "data_type": "boolean"
+      },
+      "action_result.summary.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "unquarantine_device": {
+    "action": "unquarantine device",
+    "type": "correct",
+    "read_only": false,
+    "parameters": {
+      "connector_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp connector guid"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.available": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.comment": {
+        "data_type": "string"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.isolated_by": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.unlock_code": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string"
+      },
+      "action_result.summary": {
+        "data_type": "string"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "quarantine_device": {
+    "action": "quarantine device",
+    "type": "contain",
+    "read_only": false,
+    "parameters": {
+      "connector_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp connector guid"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.available": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.comment": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.isolated_by": {
+        "data_type": "string"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.unlock_code": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string"
+      },
+      "action_result.summary": {
+        "data_type": "string"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "find_device": {
+    "action": "find device",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "group_guid": {
+        "data_type": "string"
+      },
+      "group_name": {
+        "data_type": "string"
+      },
+      "user": {
+        "data_type": "string"
+      },
+      "hostname": {
+        "data_type": "string"
+      },
+      "external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ],
+        "primary": true
+      },
+      "internal_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.parameter.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.parameter.group_name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.hostname": {
+        "data_type": "string"
+      },
+      "action_result.parameter.internal_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.parameter.user": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.*.connector_version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.demo": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.data.*.install_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.internal_ips": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.is_compromised": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.isolation.available": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.*.isolation.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.last_seen": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.links.trajectory": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.*.network_addresses.*.ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.*.network_addresses.*.mac": {
+        "data_type": "string",
+        "contains": [
+          "mac address"
+        ]
+      },
+      "action_result.data.*.data.*.operating_system": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.orbital.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.policy.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.policy.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.*.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.demo": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.install_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.is_compromised": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.isolation.available": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.isolation.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.last_seen": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.orbital.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.links.self": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.total_endpoints": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "get_device_info": {
+    "action": "get device info",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "connector_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp connector guid"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.data.*.data.connector_version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.data.internal_ips": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.demo": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.orbital.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.isolation.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.isolation.available": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.last_seen": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.install_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.is_compromised": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.data.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.links.trajectory": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.network_addresses.*.ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.data.network_addresses.*.mac": {
+        "data_type": "string",
+        "contains": [
+          "mac address"
+        ]
+      },
+      "action_result.data.*.data.operating_system": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.policy.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.policy.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.total_endpoints": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "block_hash": {
+    "action": "block hash",
+    "type": "contain",
+    "read_only": false,
+    "parameters": {
+      "file_list_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "hash",
+          "sha256"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.links.file_list": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.sha256": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.source": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_added_to_list": {
+        "data_type": "boolean"
+      },
+      "action_result.summary.file_hash_added": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "unblock_hash": {
+    "action": "unblock hash",
+    "type": "contain",
+    "read_only": false,
+    "parameters": {
+      "file_list_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "hash",
+          "sha256"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_removed_from_list": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "allow_hash": {
+    "action": "allow hash",
+    "type": "contain",
+    "read_only": false,
+    "parameters": {
+      "file_list_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "hash",
+          "sha256"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.links.file_list": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.sha256": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.source": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_added_to_list": {
+        "data_type": "boolean"
+      },
+      "action_result.summary.file_hash_added": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "disallow_hash": {
+    "action": "disallow hash",
+    "type": "contain",
+    "read_only": false,
+    "parameters": {
+      "file_list_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "hash",
+          "sha256"
+        ],
+        "primary": true
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "hash",
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_removed_from_list": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "list_filelists": {
+    "action": "list filelists",
+    "type": "generic",
+    "read_only": true,
+    "parameters": {},
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.data.*.links.file_list": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.type": {
+        "data_type": "string"
+      },
+      "action_result.summary.total_lists": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "get_filelist": {
+    "action": "get filelist",
+    "type": "generic",
+    "read_only": true,
+    "parameters": {
+      "file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "name": {
+        "data_type": "string"
+      },
+      "type": {
+        "data_type": "string",
+        "value_list": [
+          "application_blocking",
+          "simple_custom_detections"
+        ]
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.data.*.data.items.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.items.*.links.file_list": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.items.*.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.policies.*.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.policies.*.links.policy": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.policies.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_count": {
+        "data_type": "numeric"
+      },
+      "action_result.summary.file_list_guid": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_list_name": {
+        "data_type": "string"
+      },
+      "action_result.summary.total_endpoints": {
+        "data_type": "numeric"
+      },
+      "action_result.summary.total_hashes": {
+        "data_type": "numeric"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "remove_listitem": {
+    "action": "remove listitem",
+    "type": "correct",
+    "read_only": false,
+    "parameters": {
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "sha256"
+        ],
+        "primary": true
+      },
+      "file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "name": {
+        "data_type": "string"
+      },
+      "type": {
+        "data_type": "string",
+        "value_list": [
+          "application_blocking",
+          "simple_custom_detections"
+        ]
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.parameter.name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.file_deleted": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      },
+      "action_result.summary.file_deleted": {
+        "data_type": "boolean"
+      }
+    }
+  },
+  "add_listitem": {
+    "action": "add listitem",
+    "type": "correct",
+    "read_only": false,
+    "parameters": {
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "sha256"
+        ],
+        "primary": true
+      },
+      "file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "name": {
+        "data_type": "string"
+      },
+      "type": {
+        "data_type": "string",
+        "value_list": [
+          "application_blocking",
+          "simple_custom_detections"
+        ]
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.parameter.name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.links.file_list": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.sha256": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.source": {
+        "data_type": "string"
+      },
+      "action_result.data.*.file_added": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_added": {
+        "data_type": "boolean"
+      },
+      "action_result.summary.file_deleted": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "find_listitem": {
+    "action": "find listitem",
+    "type": "generic",
+    "read_only": true,
+    "parameters": {
+      "hash": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "sha256"
+        ],
+        "primary": true
+      },
+      "file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ],
+        "primary": true
+      },
+      "name": {
+        "data_type": "string"
+      },
+      "type": {
+        "data_type": "string",
+        "value_list": [
+          "application_blocking",
+          "simple_custom_detections"
+        ]
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.file_list_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.parameter.hash": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.parameter.name": {
+        "data_type": "string"
+      },
+      "action_result.parameter.type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.data.*.data.links.file_list": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.data.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.source": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_found": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "get_device_trajectory": {
+    "action": "get device trajectory",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "connector_guid": {
+        "data_type": "string",
+        "required": true,
+        "contains": [
+          "fireamp connector guid"
+        ],
+        "primary": true
+      },
+      "filter": {
+        "data_type": "string",
+        "contains": [
+          "sha256",
+          "url",
+          "ip"
+        ]
+      },
+      "days_back": {
+        "data_type": "numeric"
+      },
+      "executed_only": {
+        "data_type": "boolean",
+        "default": true
+      },
+      "limit": {
+        "data_type": "numeric"
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.parameter.days_back": {
+        "data_type": "numeric"
+      },
+      "action_result.parameter.executed_only": {
+        "data_type": "boolean"
+      },
+      "action_result.parameter.filter": {
+        "data_type": "string",
+        "contains": [
+          "sha256",
+          "url",
+          "ip"
+        ]
+      },
+      "action_result.parameter.limit": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.computer.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.computer.connector_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.connector_version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.demo": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.computer.external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.computer.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.computer.install_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.internal_ips": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.is_compromised": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.computer.isolation.available": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.computer.isolation.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.computer.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.computer.links.trajectory": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.computer.network_addresses.*.ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.computer.network_addresses.*.mac": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.operating_system": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.orbital.status": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.policy.guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.policy.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.computer.windows_processor_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.parent.identity.md5": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.parent.identity.sha1": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.parent.file_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.parent.process_id": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.clean": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.events.*.scan.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.scan.scanned_files": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.scanned_paths": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.scanned_processes": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.malicious_detections": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.data.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp file list guid"
+        ]
+      },
+      "action_result.data.*.data.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.data.source": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.cloud_ioc.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.cloud_ioc.short_description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.command_line.arguments": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.command_line.environment.Path": {
+        "data_type": "string",
+        "contains": [
+          "file path"
+        ]
+      },
+      "action_result.data.*.events.*.command_line.environment.USERNAME": {
+        "data_type": "string",
+        "contains": [
+          "user name"
+        ]
+      },
+      "action_result.data.*.events.*.date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.detection": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.severity": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.detection_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.event_type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.data.links.file_list": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.events.*.event_type_id": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.file.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.file_name": {
+        "data_type": "string",
+        "contains": [
+          "file name",
+          "sha1"
+        ]
+      },
+      "action_result.data.*.events.*.file.file_path": {
+        "data_type": "string",
+        "contains": [
+          "file name"
+        ]
+      },
+      "action_result.data.*.events.*.file.file_type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.identity.md5": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.identity.sha1": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.identity.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.events.*.file.parent.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.parent.identity.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.events.*.group_guids": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.isolation.duration": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.network_info.dirty_url": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.events.*.network_info.local_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.events.*.network_info.local_port": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.network_info.nfm.direction": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.nfm.protocol": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.identity.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.events.*.network_info.remote_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.events.*.network_info.remote_port": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.start_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.start_timestamp": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.timestamp": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.timestamp_nanoseconds": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.cve": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.score": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_found": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  },
+  "get_device_events": {
+    "action": "get device events",
+    "type": "investigate",
+    "read_only": true,
+    "parameters": {
+      "connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ],
+        "primary": true
+      },
+      "detection_sha256": {
+        "data_type": "string",
+        "contains": [
+          "hash"
+        ],
+        "primary": true
+      },
+      "application_sha256": {
+        "data_type": "string",
+        "contains": [
+          "hash"
+        ],
+        "primary": true
+      },
+      "group_guid": {
+        "data_type": "string"
+      },
+      "start_date": {
+        "data_type": "string"
+      },
+      "offset": {
+        "data_type": "numeric"
+      },
+      "event_type": {
+        "data_type": "string"
+      },
+      "limit": {
+        "data_type": "numeric"
+      }
+    },
+    "outputs": {
+      "action_result.status": {
+        "data_type": "string"
+      },
+      "action_result.parameter.application_sha256": {
+        "data_type": "string",
+        "contains": [
+          "hash"
+        ]
+      },
+      "action_result.parameter.connector_guid": {
+        "data_type": "string",
+        "contains": [
+          "fireamp connector guid"
+        ]
+      },
+      "action_result.parameter.detection_sha256": {
+        "data_type": "string",
+        "contains": [
+          "hash"
+        ]
+      },
+      "action_result.parameter.event_type": {
+        "data_type": "string"
+      },
+      "action_result.parameter.group_guid": {
+        "data_type": "string"
+      },
+      "action_result.parameter.limit": {
+        "data_type": "numeric"
+      },
+      "action_result.parameter.offset": {
+        "data_type": "numeric"
+      },
+      "action_result.parameter.start_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.cloud_ioc.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.cloud_ioc.short_description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.computer.active": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.events.*.computer.connector_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.computer.external_ip": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.events.*.computer.links.computer": {
+        "data_type": "string",
+        "contains": [
+          "ip"
+        ]
+      },
+      "action_result.data.*.events.*.computer.links.group": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.events.*.computer.links.trajectory": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.events.*.computer.network_addresses.*.ip": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.computer.network_addresses.*.mac": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.event_type": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.computer.user": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.computer.hostname": {
+        "data_type": "string",
+        "contains": [
+          "host name"
+        ]
+      },
+      "action_result.data.*.events.*.id": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.connector_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.detection": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.detection_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.event_type_id": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.file.archived_file.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.archived_file.identity.sha256": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.application": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.attacked_module": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.base_address": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.indicators.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.indicators.*.id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.indicators.*.severity": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.attack_details.indicators.*.short_description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.file_name": {
+        "data_type": "string",
+        "contains": [
+          "file name"
+        ]
+      },
+      "action_result.data.*.events.*.file.file_path": {
+        "data_type": "string",
+        "contains": [
+          "file name",
+          "file path"
+        ]
+      },
+      "action_result.data.*.events.*.file.identity.md5": {
+        "data_type": "string",
+        "contains": [
+          "md5"
+        ]
+      },
+      "action_result.data.*.events.*.file.identity.sha1": {
+        "data_type": "string",
+        "contains": [
+          "sha1"
+        ]
+      },
+      "action_result.data.*.events.*.file.identity.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.events.*.file.parent.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.file.parent.file_name": {
+        "data_type": "string",
+        "contains": [
+          "file name"
+        ]
+      },
+      "action_result.data.*.events.*.file.parent.identity.md5": {
+        "data_type": "string",
+        "contains": [
+          "md5"
+        ]
+      },
+      "action_result.data.*.events.*.file.parent.identity.sha1": {
+        "data_type": "string",
+        "contains": [
+          "sha1"
+        ]
+      },
+      "action_result.data.*.events.*.file.parent.identity.sha256": {
+        "data_type": "string",
+        "contains": [
+          "sha256"
+        ]
+      },
+      "action_result.data.*.events.*.file.parent.process_id": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.group_guids": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.isolation.duration": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.isolation.user": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.dirty_url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.local_ip": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.local_port": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.network_info.nfm.direction": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.nfm.protocol": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.disposition": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.file_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.identity.md5": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.identity.sha1": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.identity.sha256": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.parent.process_id": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.network_info.remote_ip": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.network_info.remote_port": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.clean": {
+        "data_type": "boolean"
+      },
+      "action_result.data.*.events.*.scan.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.scan.malicious_detections": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.scanned_files": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.scanned_paths": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.scan.scanned_processes": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.severity": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.start_date": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.start_timestamp": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.tactics.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.tactics.*.external_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.tactics.*.mitre_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.tactics.*.mitre_url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.tactics.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.data_sources": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.external_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.mitre_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.mitre_url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.permissions": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.platforms": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.system_requirements": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.techniques.*.tactics_names": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_end_time": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_hunt_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_remediation": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_report_guid": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_start_time": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_summary": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.incident_title": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.severity": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.tactics.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.tactics.*.external_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.tactics.*.mitre_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.tactics.*.mitre_url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.tactics.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.data_sources": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.description": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.external_id": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.mitre_name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.mitre_url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.permissions": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.platforms": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.system_requirements": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.threat_hunting.techniques.*.tactics_names": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.timestamp": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.timestamp_nanoseconds": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.cve": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.name": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.score": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.url": {
+        "data_type": "string"
+      },
+      "action_result.data.*.events.*.vulnerabilities.*.version": {
+        "data_type": "string"
+      },
+      "action_result.data.*.metadata.links.next": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.links.self": {
+        "data_type": "string",
+        "contains": [
+          "url"
+        ]
+      },
+      "action_result.data.*.metadata.results.current_item_count": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.index": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.items_per_page": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.metadata.results.total": {
+        "data_type": "numeric"
+      },
+      "action_result.data.*.version": {
+        "data_type": "string"
+      },
+      "action_result.summary.file_found": {
+        "data_type": "boolean"
+      },
+      "action_result.message": {
+        "data_type": "string"
+      },
+      "summary.total_objects": {
+        "data_type": "numeric"
+      },
+      "summary.total_objects_successful": {
+        "data_type": "numeric"
+      }
+    }
+  }
+}

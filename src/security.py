@@ -28,9 +28,15 @@ def canonical_uuid4(value, parameter_name):
 
 def unique_exact_guid(items, requested_name, resource_name):
     """Resolve exactly one case-sensitive resource name to its GUID."""
-    matches = [item.get("guid") for item in items if item.get("name") == requested_name and item.get("guid")]
+    matches = [
+        item.get("guid")
+        for item in items
+        if item.get("name") == requested_name and item.get("guid")
+    ]
     if not matches:
         raise ValueError(f"Unable to find specified {resource_name}")
     if len(matches) > 1:
-        raise ValueError(f"More than one {resource_name} exactly matched the requested name")
+        raise ValueError(
+            f"More than one {resource_name} exactly matched the requested name"
+        )
     return matches[0]
